@@ -1,0 +1,2498 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>5 Hub Team - منصة الإدارة والتفاعل </title>
+    <!-- Google Fonts: Cairo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        cairo: ['Cairo', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f7ff',
+                            100: '#e0effe',
+                            500: '#0284c7',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
+                            900: '#1e3a8a',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            font-family: 'Cairo', sans-serif;
+            scrollbar-width: thin;
+            scrollbar-color: rgba(156, 163, 175, 0.3) transparent;
+            -webkit-tap-highlight-color: transparent;
+            overflow-x: hidden;
+        }
+        /* Cross-browser custom scrollbar styling */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(156, 163, 175, 0.3);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(156, 163, 175, 0.5);
+        }
+        /* Mobile hardware acceleration & smooth scrolling transition */
+        .smooth-transition {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 min-h-screen flex flex-col transition-colors duration-300 antialiased overflow-x-hidden">
+
+    <!-- شريط محاكاة الأدوار لتسهيل تجربة المنصة واختبار الحماية والصلاحيات الصارمة -->
+    <div id="simulator-bar" class="bg-gradient-to-r from-amber-600 via-yellow-500 to-amber-700 text-white text-[11px] py-2 px-4 shadow-md z-50 flex flex-col md:flex-row items-center justify-between gap-2 border-b border-amber-500">
+        <div class="flex items-center gap-2 text-center md:text-right">
+            <span class="bg-white/20 text-white px-2 py-0.5 rounded-full font-bold animate-pulse shrink-0">محاكي الأدوار 🛠️</span>
+            <span>اضغط للتبديل السريع واختبار عزل الصلاحيات والسرية التامة للأعضاء:</span>
+        </div>
+        <div class="flex flex-wrap justify-center gap-1.5" id="simulator-buttons">
+            <button onclick="simulateUser('owner')" id="sim-owner" class="px-2.5 py-1 rounded bg-white text-slate-900 font-bold shadow hover:bg-slate-100 transition-all flex items-center gap-1 active:scale-95">
+                👑 أحمد رامي (المالك)
+            </button>
+            <button onclick="simulateUser('admin')" id="sim-admin" class="px-2.5 py-1 rounded bg-white/20 text-white hover:bg-white/30 transition-all flex items-center gap-1 active:scale-95">
+                🛡️ مشرف (أحمد)
+            </button>
+            <button onclick="simulateUser('member')" id="sim-member" class="px-2.5 py-1 rounded bg-white/20 text-white hover:bg-white/30 transition-all flex items-center gap-1 active:scale-95">
+                👤 عضو (سارة)
+            </button>
+            <button onclick="simulateUser('pending')" id="sim-pending" class="px-2.5 py-1 rounded bg-white/20 text-white hover:bg-white/30 transition-all flex items-center gap-1 active:scale-95">
+                ⏳ معلق (خالد)
+            </button>
+        </div>
+    </div>
+
+    <!-- شاشة وضع الصيانة عند تفعيلها من قبل المالك أحمد رامي -->
+    <div id="maintenance-overlay" class="hidden fixed inset-0 bg-slate-900/98 text-white z-50 flex flex-col items-center justify-center p-6 text-center backdrop-blur-md">
+        <div class="w-20 h-20 bg-amber-500/20 text-amber-500 rounded-full flex items-center justify-center text-3xl mb-6 animate-bounce">
+            <i class="fa-solid fa-screwdriver-wrench"></i>
+        </div>
+        <h1 class="text-2xl md:text-4xl font-extrabold text-amber-400 mb-3">الموقع قيد الصيانة حالياً</h1>
+        <p class="text-slate-300 max-w-md mb-6 leading-relaxed text-sm md:text-base">
+            يقوم الفريق حالياً ببعض أعمال الصيانة والتحسينات المجدولة تحت إشراف المالك <strong>أحمد رامي</strong>. تم إغلاق المنصة مؤقتاً وسنعاود العمل فور انتهائنا.
+        </p>
+        <div class="text-xs bg-slate-800 text-slate-400 border border-slate-700 px-4 py-2.5 rounded-lg max-w-xs">
+            خاص بالمالك: يمكنك تجاوز الصيانة عن طريق تسجيل الدخول كـ <span class="text-amber-300 font-bold block mt-1">مالك المنصة 👑</span>
+        </div>
+    </div>
+
+    <!-- واجهة تسجيل الدخول الرئيسية للتحقق من كلمات المرور واليوزرات الجديدة -->
+    <div id="login-container" class="hidden fixed inset-0 bg-slate-950 z-50 flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white dark:bg-slate-900 p-6 md:p-8 rounded-2xl max-w-md w-full shadow-2xl border border-slate-200 dark:border-slate-800 space-y-6 my-auto">
+            <div class="text-center">
+                <div class="w-14 h-14 bg-gradient-to-tr from-blue-600 to-sky-400 rounded-2xl flex items-center justify-center text-white font-black text-2xl mx-auto shadow-lg shadow-blue-500/20 mb-4">
+                    5
+                </div>
+                <h2 class="text-2xl font-bold text-slate-850 dark:text-white">منصة 5 Hub Team</h2>
+                <p class="text-xs text-slate-400 mt-1.5 font-cairo">نظام الإدارة والسرية التامة للفريق</p>
+            </div>
+
+            <div id="login-error" class="hidden bg-rose-500/10 border border-rose-500/20 text-rose-500 p-3 rounded-lg text-xs font-bold text-center">
+                خطأ في اسم المستخدم أو كلمة المرور!
+            </div>
+
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 mb-1">اسم المستخدم (Username)</label>
+                    <div class="relative">
+                        <input type="text" id="login-username" class="w-full pl-3 pr-10 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-sm focus:outline-none focus:border-brand-500 text-slate-800 dark:text-white" placeholder="مثال: ahmed">
+                        <i class="fa-regular fa-user absolute right-3.5 top-4 text-slate-400"></i>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 mb-1">كلمة المرور (Password)</label>
+                    <div class="relative">
+                        <input type="password" id="login-password" class="w-full pl-3 pr-10 py-3 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-sm focus:outline-none focus:border-brand-500 text-slate-800 dark:text-white" placeholder="••••••••">
+                        <i class="fa-solid fa-lock absolute right-3.5 top-4 text-slate-400"></i>
+                    </div>
+                </div>
+
+                <button onclick="attemptLogin()" class="w-full h-11 bg-brand-600 hover:bg-brand-700 text-white rounded-xl text-sm font-bold shadow-lg shadow-brand-600/10 transition-all flex items-center justify-center gap-2 active:scale-98">
+                    <span>تسجيل الدخول الآمن</span>
+                    <i class="fa-solid fa-right-to-bracket text-xs"></i>
+                </button>
+            </div>
+
+            <div class="bg-slate-100 dark:bg-slate-950 p-4 rounded-xl text-xs space-y-1.5 text-slate-400 border border-slate-200 dark:border-slate-850">
+                <span class="font-bold text-amber-500 block">💡 بيانات التجربة الافتراضية:</span>
+                <div>• المالك (أحمد رامي): يوزر <span class="text-slate-800 dark:text-slate-200 font-bold font-sans">ahmed</span> وباسورد <span class="text-slate-800 dark:text-slate-200 font-bold font-sans">123</span></div>
+                <div>• العضو (سارة): يوزر <span class="text-slate-800 dark:text-slate-200 font-bold font-sans">sara</span> وباسورد <span class="text-slate-800 dark:text-slate-200 font-bold font-sans">123</span></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- تخطيط لوحة التحكم الرئيسي والجانبي -->
+    <div id="main-app-container" class="flex-1 flex flex-col md:flex-row relative">
+
+        <!-- غطاء خلفي عند فتح القائمة الجانبية للهاتف المحمول -->
+        <div id="sidebar-overlay" onclick="toggleSidebarMobile()" class="hidden fixed inset-0 bg-slate-950/60 z-30 md:hidden backdrop-blur-sm transition-opacity duration-300"></div>
+
+        <!-- القائمة الجانبية للتنقل بين الأقسام -->
+        <aside id="app-sidebar" class="fixed md:static inset-y-0 right-0 z-40 w-64 bg-slate-900 text-slate-300 flex flex-col border-l border-slate-850 shrink-0 transition-transform duration-300 ease-in-out transform translate-x-full md:translate-x-0 rtl:translate-x-full rtl:md:translate-x-0">
+            <!-- Sidebar Header -->
+            <div class="p-4 flex items-center justify-between border-b border-slate-850 bg-slate-950">
+                <div class="flex items-center gap-2">
+                    <div class="w-9 h-9 rounded-xl bg-gradient-to-tr from-blue-600 to-sky-400 flex items-center justify-center text-white font-black text-lg shadow-lg">
+                        5
+                    </div>
+                    <div>
+                        <span class="font-bold text-white tracking-wide block">5 Hub Team</span>
+                        <span class="text-[10px] text-slate-400">نظام الإدارة الشامل</span>
+                    </div>
+                </div>
+                <!-- زر إغلاق القائمة الجانبية في الهاتف -->
+                <button onclick="toggleSidebarMobile()" class="md:hidden text-slate-400 hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+
+            <!-- Active User Profile Card -->
+            <div class="p-4 bg-slate-900/60 border-b border-slate-850">
+                <div class="flex items-center gap-3">
+                    <div class="relative">
+                        <img id="user-avatar" src="https://placehold.co/100x100/2563eb/ffffff?text=U" alt="Avatar" class="w-11 h-11 rounded-full border-2 border-brand-500 object-cover shadow-sm">
+                        <span class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-slate-900 rounded-full animate-pulse"></span>
+                    </div>
+                    <div class="overflow-hidden flex-1">
+                        <h4 id="user-name" class="font-bold text-white text-xs truncate">أحمد رامي</h4>
+                        <span id="user-role-badge" class="text-[9px] px-2 py-0.5 rounded-full inline-block mt-1 font-semibold"></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tab Navigation Menu -->
+            <nav class="flex-1 p-3 space-y-1 overflow-y-auto" id="sidebar-menu">
+                <!-- Navigation Tabs will be rendered here dynamically based on role permissions -->
+            </nav>
+
+            <!-- Mode Toggle & Logout Buttons in Sidebar -->
+            <div class="p-4 border-t border-slate-850 bg-slate-950/50 space-y-3">
+                <div class="flex items-center justify-between text-xs">
+                    <span class="text-slate-400">الوضع الداكن / المضيء</span>
+                    <button onclick="toggleTheme()" class="w-10 h-6 bg-slate-700 rounded-full p-1 transition-colors duration-300 focus:outline-none relative" id="theme-btn">
+                        <div class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-300 translate-x-4 dark:translate-x-0 flex items-center justify-center">
+                            <i class="fa-solid fa-sun text-[9px] text-yellow-500 dark:hidden"></i>
+                            <i class="fa-solid fa-moon text-[9px] text-indigo-900 hidden dark:block"></i>
+                        </div>
+                    </button>
+                </div>
+                
+                <button onclick="logout()" class="w-full bg-rose-600/10 hover:bg-rose-600 text-rose-500 hover:text-white py-2.5 rounded-xl text-xs font-bold border border-rose-500/20 transition-all flex items-center justify-center gap-2 active:scale-95">
+                    <i class="fa-solid fa-power-off text-[10px]"></i>
+                    <span>تسجيل الخروج</span>
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Content View Area -->
+        <main class="flex-1 flex flex-col min-w-0 bg-slate-100 dark:bg-slate-950 transition-colors duration-300">
+            <!-- Top Navbar -->
+            <header class="h-16 border-b border-slate-200 dark:border-slate-900 bg-white dark:bg-slate-900/90 flex items-center justify-between px-4 md:px-6 z-10 sticky top-0 backdrop-blur-md">
+                <div class="flex items-center gap-3">
+                    <button onclick="toggleSidebarMobile()" class="md:hidden text-slate-500 dark:text-slate-400 p-2 hover:bg-slate-100 dark:hover:bg-slate-800 rounded-lg">
+                        <i class="fa-solid fa-bars text-xl"></i>
+                    </button>
+                    <h2 id="current-tab-title" class="font-bold text-sm md:text-base text-slate-800 dark:text-white truncate">الرئيسية</h2>
+                </div>
+
+                <!-- Announcements / Live Pinned Ticker -->
+                <div class="hidden lg:flex items-center gap-2 max-w-md bg-amber-500/10 dark:bg-amber-500/5 text-amber-600 dark:text-amber-400 px-3 py-1.5 rounded-full border border-amber-500/20 text-xs">
+                    <i class="fa-solid fa-thumbtack animate-bounce"></i>
+                    <span class="font-semibold shrink-0">إعلان مثبت:</span>
+                    <marquee id="pinned-ticker" class="w-48" scrollamount="2">اهلا بكم في منصه 5 HUB TEAM</marquee>
+                </div>
+
+                <!-- Right items -->
+                <div class="flex items-center gap-2">
+                    <div class="flex items-center gap-1.5 text-[10px] md:text-xs bg-slate-100 dark:bg-slate-800 px-3 py-1.5 rounded-full text-slate-600 dark:text-slate-300">
+                        <span class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></span>
+                        <span id="network-status" class="truncate max-w-[80px] sm:max-w-none font-semibold">متصل كمسؤول</span>
+                    </div>
+                </div>
+            </header>
+
+            <!-- VIEW CONTAINER -->
+            <div class="flex-1 overflow-y-auto p-4 md:p-6" id="view-container">
+                <!-- Tab views will be injected here via Javascript -->
+            </div>
+        </main>
+
+    </div>
+
+    <!-- Custom UI Confirm Dialog Overlay (Replaces confirm) -->
+    <div id="modal-confirm" class="hidden fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 p-6 space-y-4 m-auto">
+            <div class="flex items-center gap-3 text-amber-500">
+                <i class="fa-solid fa-triangle-exclamation text-xl"></i>
+                <h4 class="font-bold text-slate-800 dark:text-white text-sm">تأكيد الإجراء</h4>
+            </div>
+            <p id="confirm-message" class="text-xs text-slate-500 dark:text-slate-400 leading-relaxed"></p>
+            <div class="flex justify-end gap-2 pt-2 text-xs">
+                <button onclick="handleConfirm(false)" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold active:scale-95">إلغاء</button>
+                <button onclick="handleConfirm(true)" class="px-4 py-2 bg-rose-600 text-white rounded-xl hover:bg-rose-700 font-bold active:scale-95">تأكيد ومتابعة</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast-container" class="fixed bottom-5 left-5 z-50 flex flex-col gap-2 max-w-xs md:max-w-sm w-full pointer-events-none"></div>
+
+    <!-- Modal: Profile Settings -->
+    <div id="modal-profile" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 transform transition-all scale-95 duration-200 m-auto">
+            <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
+                <h3 class="font-bold text-base">تعديل ملفك الشخصي</h3>
+                <button onclick="closeModal('modal-profile')" class="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-slate-400">الاسم الكامل</label>
+                    <input type="text" id="profile-name-input" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-sm focus:outline-none focus:border-brand-500 text-slate-800 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-slate-400">رابط الصورة الشخصية (اختياري)</label>
+                    <input type="text" id="profile-avatar-input" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-sm focus:outline-none focus:border-brand-500 text-slate-800 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-slate-400">تحديث كلمة المرور</label>
+                    <input type="password" id="profile-password-input" placeholder="اتركها فارغة لعدم التغيير" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-sm focus:outline-none focus:border-brand-500 text-slate-800 dark:text-white">
+                </div>
+            </div>
+            <div class="p-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-2">
+                <button onclick="closeModal('modal-profile')" class="px-4 py-2 text-xs bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-200">إلغاء</button>
+                <button onclick="saveUserProfile()" class="px-4 py-2 text-xs bg-brand-600 text-white rounded-xl hover:bg-brand-700 font-bold">حفظ التغييرات</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Create Task -->
+    <div id="modal-task" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm animate-fade-in">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 m-auto">
+            <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
+                <h3 class="font-bold text-base">إنشاء مهمة جديدة</h3>
+                <button onclick="closeModal('modal-task')" class="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="p-6 space-y-4 max-h-[70vh] overflow-y-auto">
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-slate-400">عنوان المهمة *</label>
+                    <input type="text" id="task-title-input" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-sm focus:outline-none focus:border-brand-500 text-slate-800 dark:text-white">
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-slate-400">وصف المهمة</label>
+                    <textarea id="task-desc-input" rows="3" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-sm focus:outline-none focus:border-brand-500 text-slate-800 dark:text-white"></textarea>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1 text-slate-400">تاريخ التسليم *</label>
+                        <input type="date" id="task-deadline-input" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-sm focus:outline-none focus:border-brand-500 text-slate-800 dark:text-white">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1 text-slate-400">الأولوية</label>
+                        <select id="task-priority-input" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-sm focus:outline-none focus:border-brand-500 text-slate-800 dark:text-white">
+                            <option value="منخفضة">منخفضة</option>
+                            <option value="متوسطة" selected>متوسطة</option>
+                            <option value="عالية">عالية</option>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-slate-400">إسناد المهمة إلى (مستكشف الأعضاء)</label>
+                    <div class="text-[10px] text-amber-500 mb-2 leading-relaxed">💡 قائمة الأعضاء متاحة لإسناد المهام للمالك والمدراء فقط لتسهيل التوزيع والتشاركية.</div>
+                    <select id="task-assignee-input" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-sm focus:outline-none focus:border-brand-500 text-slate-800 dark:text-white">
+                        <!-- Dynamic hidden member list for assignees -->
+                    </select>
+                </div>
+            </div>
+            <div class="p-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-2">
+                <button onclick="closeModal('modal-task')" class="px-4 py-2 text-xs bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-200">إلغاء</button>
+                <button onclick="createNewTask()" class="px-4 py-2 text-xs bg-brand-600 text-white rounded-xl hover:bg-brand-700 font-bold">إنشاء المهمة</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Change Password of specific User -->
+    <div id="modal-change-password" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-sm w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 m-auto">
+            <div class="p-5 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+                <h3 class="font-bold text-sm flex items-center gap-2">
+                    <i class="fa-solid fa-key text-amber-500"></i>
+                    <span>تغيير كلمة المرور للمستخدم</span>
+                </h3>
+            </div>
+            <div class="p-5 space-y-4 text-xs">
+                <div>
+                    <span class="text-slate-400 block mb-1">اسم المستخدم المستهدف:</span>
+                    <span id="change-password-target-name" class="font-bold text-slate-800 dark:text-white text-sm"></span>
+                </div>
+                <div>
+                    <label class="block font-bold text-slate-400 mb-1">كلمة المرور الجديدة *</label>
+                    <input type="text" id="change-pwd-input" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-sm focus:outline-none focus:border-brand-500 text-slate-800 dark:text-white" placeholder="اكتب كلمة مرور جديدة">
+                </div>
+            </div>
+            <div class="p-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-2 text-xs">
+                <button onclick="closeModal('modal-change-password')" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-200">إلغاء</button>
+                <button onclick="submitChangedPassword()" class="px-4 py-2 bg-brand-600 text-white rounded-xl hover:bg-brand-700 font-bold">تحديث كلمة المرور</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Create Custom User with Password -->
+    <div id="modal-create-user" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 m-auto">
+            <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
+                <h3 class="font-bold text-base flex items-center gap-2">
+                    <i class="fa-solid fa-user-plus text-brand-500"></i>
+                    <span>إنشاء مستخدم جديد يدوياً</span>
+                </h3>
+                <button onclick="closeModal('modal-create-user')" class="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1">
+                    <i class="fa-solid fa-xmark text-lg"></i>
+                </button>
+            </div>
+            <div class="p-6 space-y-4 text-xs max-h-[70vh] overflow-y-auto">
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 mb-1">الاسم الكامل *</label>
+                    <input type="text" id="new-user-fullname" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 focus:outline-none focus:border-brand-500 text-slate-800 dark:text-white" placeholder="مثال: أحمد رامي">
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1">اسم المستخدم (للدخول) *</label>
+                        <input type="text" id="new-user-username" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 focus:outline-none focus:border-brand-500 text-slate-800 dark:text-white" placeholder="مثال: ahmed_dev">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 mb-1">البريد الإلكتروني *</label>
+                        <input type="email" id="new-user-email" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 focus:outline-none focus:border-brand-500 text-slate-800 dark:text-white" placeholder="mail@5hub.com">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 mb-1">كلمة المرور الخاصة به *</label>
+                    <input type="text" id="new-user-password" oninput="checkPasswordStrength(this.value)" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 focus:outline-none focus:border-brand-500 text-slate-800 dark:text-white" placeholder="اكتب كلمة مرور قوية">
+                    <!-- Password Strength indicator -->
+                    <div class="mt-1.5 flex items-center justify-between">
+                        <span class="text-[10px] text-slate-400">قوة كلمة المرور:</span>
+                        <span id="pwd-strength-txt" class="text-[10px] font-bold text-slate-500">فارغ</span>
+                    </div>
+                    <div class="w-full bg-slate-200 dark:bg-slate-800 h-1.5 rounded-full mt-1 overflow-hidden">
+                        <div id="pwd-strength-bar" class="w-0 h-1.5 transition-all duration-300 bg-red-500"></div>
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 mb-1">صلاحية المستخدم</label>
+                    <select id="new-user-role" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 focus:outline-none focus:border-brand-500 text-slate-800 dark:text-white">
+                        <option value="member" selected>عضو فريق عادي (Member)</option>
+                        <option value="admin">مشرف بالنظام (Admin)</option>
+                        <option value="owner">مالك المنصة (Owner)</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold text-slate-400 mb-1">تفعيل فوري للمستخدم؟</label>
+                    <select id="new-user-status" class="w-full px-3 py-2.5 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 focus:outline-none focus:border-brand-500 text-slate-800 dark:text-white">
+                        <option value="approved" selected>مفعل ونشط فوراً ✅</option>
+                        <option value="pending">معلق بانتظار الموافقة ⏳</option>
+                    </select>
+                </div>
+            </div>
+            <div class="p-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-2 text-xs">
+                <button onclick="closeModal('modal-create-user')" class="px-4 py-2 bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-200">إلغاء</button>
+                <button onclick="createNewCustomUser()" class="px-4 py-2 bg-brand-600 text-white rounded-xl hover:bg-brand-700 font-bold">تأكيد وإنشاء الحساب</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Upload File -->
+    <div id="modal-file" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4 backdrop-blur-sm">
+        <div class="bg-white dark:bg-slate-900 rounded-2xl max-w-md w-full overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-800 m-auto animate-fade-in">
+            <div class="p-5 border-b border-slate-200 dark:border-slate-800 flex justify-between items-center bg-slate-50 dark:bg-slate-950">
+                <h3 class="font-bold text-base">رفع ملف جديد</h3>
+                <button onclick="closeModal('modal-file')" class="text-slate-400 hover:text-slate-600 dark:hover:text-white p-1"><i class="fa-solid fa-xmark text-lg"></i></button>
+            </div>
+            <div class="p-6 space-y-4">
+                <div>
+                    <label class="block text-xs font-semibold mb-1 text-slate-400">اسم الملف *</label>
+                    <input type="text" id="file-name-input" placeholder="مثال: التقرير السنوي" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-sm focus:outline-none focus:border-brand-500 text-slate-800 dark:text-white">
+                </div>
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-xs font-semibold mb-1 text-slate-400">حجم الملف</label>
+                        <select id="file-size-input" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-sm focus:outline-none focus:border-brand-500 text-slate-800 dark:text-white">
+                            <option value="1.2 MB">1.2 MB</option>
+                            <option value="4.5 MB">4.5 MB</option>
+                            <option value="12.8 MB">12.8 MB</option>
+                            <option value="512 KB">512 KB</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-semibold mb-1 text-slate-400">نوع الملف</label>
+                        <select id="file-type-input" class="w-full px-3 py-2 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 text-sm focus:outline-none focus:border-brand-500 text-slate-800 dark:text-white">
+                            <option value="PDF">PDF Document</option>
+                            <option value="ZIP">ZIP Archive</option>
+                            <option value="PNG">Image (PNG)</option>
+                            <option value="TXT">Text Document</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="p-4 bg-slate-50 dark:bg-slate-950 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-2">
+                <button onclick="closeModal('modal-file')" class="px-4 py-2 text-xs bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 rounded-xl hover:bg-slate-200">إلغاء</button>
+                <button onclick="uploadMockFile()" class="px-4 py-2 text-xs bg-brand-600 text-white rounded-xl hover:bg-brand-700 font-bold animate-pulse">رفع الملف</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // إعداد وحفظ حالة التطبيق محلياً في المتصفح لتجربة مثالية
+        const DEFAULT_STATE = {
+            activeUser: null, // يبدأ بـ Null ليجبره على تسجيل الدخول
+            activeTab: 'dashboard',
+            maintenanceMode: false,
+            adminsCanApprove: true,
+            theme: 'dark',
+            chatRestricted: false,
+            searchQuery: '',
+            monitoredUserId: null, // معرف المستخدم المراقب حالياً بواسطة المالك
+            spyLogs: {}, // سجل رصد تحركات المستخدمين تحت المراقبة
+            
+            // قائمة المستخدمين مع الباسورد واليوزر ومؤشرات الاتصال
+            users: [
+                { id: 'usr-owner', name: 'أحمد رامي', username: '5hubadmin', email: 'ahmed@5hub.com', role: 'owner', status: 'approved', password: '5hubahmed125007@#$', avatar: 'https://placehold.co/100x100/ea580c/ffffff?text=👑', online: true, currentActivity: 'يتصفح لوحة التحكم الرئيسية 📊' },
+                { id: 'usr-admin', name: 'أحمد (المشرف)', username: 'admin', email: 'admin@5hub.com', role: 'admin', status: 'approved', password: '123', avatar: 'https://placehold.co/100x100/3b82f6/ffffff?text=🛡️', online: true, currentActivity: 'يتابع إحصائيات المشروع 📈' },
+                { id: 'usr-member', name: 'سارة', username: 'sara', email: 'sara@5hub.com', role: 'member', status: 'approved', password: '123', avatar: 'https://placehold.co/100x100/ec4899/ffffff?text=👩', online: true, currentActivity: 'تتصفح شاشة لوحة المهام 📋' },
+                { id: 'usr-member2', name: 'محمد', username: 'mohamed', email: 'mo@5hub.com', role: 'member', status: 'approved', password: '123', avatar: 'https://placehold.co/100x100/10b981/ffffff?text=👨', online: false, currentActivity: 'غير متصل (Offline) 💤' },
+                { id: 'usr-pending', name: 'خالد', username: 'khaled', email: 'khaled@5hub.com', role: 'member', status: 'pending', password: '123', avatar: 'https://placehold.co/100x100/6b7280/ffffff?text=⏳', online: false, currentActivity: 'حساب غير مفعل معلق ⏳' }
+            ],
+
+            // قاعدة بيانات الشات العام الافتراضية
+            chatMessages: [
+                { id: 'msg-1', senderId: 'usr-owner', text: 'أهلاً بكم جميعاً في منصة 5 Hub Team الجديدة! يرجى مراجعة المهام المسندة إليكم والالتزام الكامل بالخصوصية والسرية.', type: 'text', timestamp: 'اليوم، 10:15 ص', edited: false, pinned: true },
+                { id: 'msg-2', senderId: 'usr-admin', text: 'تم تحديث مستودع الملفات وإرفاق المخططات الأساسية للمشروع المعتمدة من المالك أحمد رامي.', type: 'text', timestamp: 'اليوم، 10:20 ص', edited: false, pinned: false },
+                { id: 'msg-3', senderId: 'usr-member', text: 'رائع جداً! لقد بدأت العمل بالفعل على تصميم لوحة التحكم التجريبية.', type: 'text', timestamp: 'اليوم، 10:25 ص', edited: false, pinned: false }
+            ],
+
+            // قاعدة بيانات المهام الافتراضية
+            tasks: [
+                { id: 'tsk-1', title: 'مراجعة المخططات الهندسية للموقع والتوقيع لـ أحمد رامي', desc: 'يرجى تدقيق ومطابقة المخططات المرفوعة في قسم الملفات.', assignedTo: 'usr-member', priority: 'عالية', status: 'doing', deadline: '2026-07-10' },
+                { id: 'tsk-2', title: 'بناء واجهات شاشات الشات التفاعلية الموحدة', desc: 'إنشاء التصاميم والواجهات المتجاوبة متوافقة مع الأجهزة الذكية.', assignedTo: 'usr-member2', priority: 'متوسطة', status: 'todo', deadline: '2026-07-15' },
+                { id: 'tsk-3', title: 'تأمين الاتصال برمجياً والتحقق من الصلاحيات', desc: 'عزل تام لقاعدة بيانات الأعضاء عن المستخدمين العاديين لحماية الخصوصية والسرية التامة.', assignedTo: 'usr-admin', priority: 'عالية', status: 'done', deadline: '2026-07-05' }
+            ],
+
+            // قاعدة بيانات الملفات الافتراضية
+            files: [
+                { id: 'fil-1', name: 'مواصفات منصة 5 Hub Team.pdf', size: '1.2 MB', type: 'PDF', uploadedBy: 'usr-owner', timestamp: '2026-07-01' },
+                { id: 'fil-2', name: 'هيكلية قاعدة البيانات الكاملة.zip', size: '4.5 MB', type: 'ZIP', uploadedBy: 'usr-admin', timestamp: '2026-07-03' }
+            ],
+
+            // سجل النشاطات التاريخي
+            auditLogs: [
+                { id: 'log-1', action: 'تعديل هوية مالك النظام', user: 'أحمد رامي (المالك)', details: 'تم تعديل اسم المالك وبياناته وتحديد كلمات المرور للجميع بنجاح.', timestamp: 'اليوم، 09:00 ص', type: 'security' },
+                { id: 'log-2', action: 'تغيير إعدادات الخصوصية والسرية', user: 'أحمد رامي (المالك)', details: 'تم تفعيل تشفير وعزل بيانات المشرفين عن الأعضاء بشكل صارم وتفعيل ميزة هوية مجهول للأعضاء في الشات.', timestamp: 'اليوم، 09:05 ص', type: 'security' },
+                { id: 'log-3', action: 'رفع ملف تقني', user: 'أحمد (المشرف)', details: 'رفع ملف "هيكلية قاعدة البيانات الكاملة.zip" بنجاح.', timestamp: 'اليوم، 10:32 ص', type: 'file' }
+            ],
+
+            notifications: [
+                { id: 'not-1', text: 'تم إسناد مهمة جديدة لك.', read: false },
+                { id: 'not-2', text: 'تم تثبيت رسالة جديدة في الشات العام.', read: false }
+            ],
+
+            typingUser: null
+        };
+
+        // تحميل الحالة من الـ LocalStorage إذا كانت موجودة لعدم ضياع الحسابات المضافة يدوياً
+        let STATE = JSON.parse(localStorage.getItem('5hub_state')) || DEFAULT_STATE;
+
+        // دالة حفظ الحالة في الـ LocalStorage
+        function saveStateToStorage() {
+            localStorage.setItem('5hub_state', JSON.stringify(STATE));
+        }
+
+        // نظام تأكيد الإجراءات البرمجي المخصص (بديل confirm)
+        let confirmCallback = null;
+        function showCustomConfirm(message, callback) {
+            document.getElementById('confirm-message').innerText = message;
+            document.getElementById('modal-confirm').classList.remove('hidden');
+            confirmCallback = callback;
+        }
+
+        function handleConfirm(agreed) {
+            document.getElementById('modal-confirm').classList.add('hidden');
+            if (agreed && confirmCallback) {
+                confirmCallback();
+            }
+            confirmCallback = null;
+        }
+
+        // دالة إتمام تسجيل الدخول اليدوي
+        function attemptLogin() {
+            const userIn = document.getElementById('login-username').value.trim();
+            const passIn = document.getElementById('login-password').value;
+            const errorBox = document.getElementById('login-error');
+
+            const foundUser = STATE.users.find(u => u.username === userIn && u.password === passIn);
+
+            if (foundUser) {
+                errorBox.classList.add('hidden');
+                STATE.activeUser = foundUser;
+                saveStateToStorage();
+
+                document.getElementById('login-container').classList.add('hidden');
+                document.getElementById('main-app-container').classList.remove('hidden');
+                document.getElementById('simulator-bar').classList.remove('hidden');
+
+                checkMaintenanceStatus();
+
+                if (foundUser.status === 'pending') {
+                    STATE.activeTab = 'pending';
+                } else {
+                    STATE.activeTab = 'dashboard';
+                }
+
+                updateSidebar();
+                renderActiveTab();
+                showToast(`أهلاً بك مجدداً، ${foundUser.name}! 👋`, 'success');
+            } else {
+                errorBox.classList.remove('hidden');
+            }
+        }
+
+        // تسجيل الخروج الآمن والعودة لشاشة الدخول
+        function logout() {
+            STATE.activeUser = null;
+            saveStateToStorage();
+            
+            document.getElementById('main-app-container').classList.add('hidden');
+            document.getElementById('simulator-bar').classList.add('hidden');
+            document.getElementById('login-container').classList.remove('hidden');
+            
+            // تصفير مدخلات تسجيل الدخول
+            document.getElementById('login-username').value = '';
+            document.getElementById('login-password').value = '';
+            document.getElementById('login-error').classList.add('hidden');
+
+            showToast('تم تسجيل الخروج وتأمين الجلسة بنجاح.', 'info');
+        }
+
+        // تغيير المستخدم الحالي في المحاكي للتنقل الفوري وتجربة مصفوفة الصلاحيات الصارمة وعزل الشات والأسماء
+        function simulateUser(roleType) {
+            let selectedUser = STATE.users.find(u => {
+                if (roleType === 'owner') return u.role === 'owner';
+                if (roleType === 'admin') return u.role === 'admin';
+                if (roleType === 'member') return u.id === 'usr-member';
+                if (roleType === 'pending') return u.status === 'pending';
+                return false;
+            });
+
+            if (selectedUser) {
+                STATE.activeUser = selectedUser;
+                saveStateToStorage();
+                
+                // تحديث شكل أزرار المحاكي
+                document.querySelectorAll('#simulator-buttons button').forEach(b => {
+                    b.className = "px-2.5 py-1 rounded bg-white/20 text-white hover:bg-white/30 transition-all flex items-center gap-1 active:scale-95";
+                });
+                document.getElementById(`sim-${roleType}`).className = "px-2.5 py-1 rounded bg-white text-slate-900 font-bold shadow hover:bg-slate-100 transition-all flex items-center gap-1 active:scale-95";
+
+                checkMaintenanceStatus();
+
+                if (selectedUser.status === 'pending') {
+                    STATE.activeTab = 'pending';
+                } else if (STATE.activeTab === 'pending' || !hasAccessToTab(STATE.activeTab)) {
+                    STATE.activeTab = 'dashboard';
+                }
+
+                updateSidebar();
+                renderActiveTab();
+                showToast(`محاكاة سريعة: تم التبديل إلى حساب ${selectedUser.name}`, 'info');
+            }
+        }
+
+        // التحقق من صلاحية الوصول للتبويبات لحماية الأمان والسرية
+        function hasAccessToTab(tabId) {
+            if (!STATE.activeUser) return false;
+            const role = STATE.activeUser.role;
+            const status = STATE.activeUser.status;
+
+            if (status === 'pending') {
+                return tabId === 'pending';
+            }
+
+            switch(tabId) {
+                case 'dashboard':
+                case 'chat':
+                case 'tasks':
+                case 'files':
+                    return true;
+                case 'admin-users':
+                case 'stats':
+                case 'audits':
+                case 'users-status': // التبويب الجديد لمراقبة المتواجدين الآن
+                    return role === 'owner' || role === 'admin';
+                case 'settings':
+                    return role === 'owner';
+                default:
+                    return false;
+            }
+        }
+
+        // فحص وضع صيانة المنصة والتحقق من تجاوزه بواسطة المالك "أحمد رامي"
+        function checkMaintenanceStatus() {
+            const overlay = document.getElementById('maintenance-overlay');
+            if (STATE.maintenanceMode) {
+                if (STATE.activeUser && STATE.activeUser.role === 'owner') {
+                    overlay.classList.add('hidden');
+                    showToast('تنبيه: أنت تتصفح المنصة الآن ووضع الصيانة العام مفعل للعامة 🛠️', 'warning');
+                } else {
+                    overlay.classList.remove('hidden');
+                }
+            } else {
+                overlay.classList.add('hidden');
+            }
+        }
+
+        // تحديث القائمة الجانبية وبناء الأقسام المتاحة للمتصفح الحالي وحجب الأقسام الحساسة عن الأعضاء تماماً
+        function updateSidebar() {
+            if (!STATE.activeUser) return;
+
+            document.getElementById('user-name').innerText = STATE.activeUser.name;
+            const roleBadge = document.getElementById('user-role-badge');
+            
+            if (STATE.activeUser.role === 'owner') {
+                roleBadge.innerText = '👑 مالك المنصة';
+                roleBadge.className = 'text-[9px] px-2.5 py-0.5 rounded-full inline-block mt-1 font-bold bg-amber-500/20 text-amber-500 border border-amber-500/30';
+            } else if (STATE.activeUser.role === 'admin') {
+                roleBadge.innerText = '🛡️ مشرف النظام';
+                roleBadge.className = 'text-[9px] px-2.5 py-0.5 rounded-full inline-block mt-1 font-bold bg-blue-500/20 text-blue-400 border border-blue-500/30';
+            } else {
+                roleBadge.innerText = STATE.activeUser.status === 'pending' ? '⏳ حساب معلق' : '👤 عضو الفريق';
+                roleBadge.className = STATE.activeUser.status === 'pending' 
+                    ? 'text-[9px] px-2.5 py-0.5 rounded-full inline-block mt-1 font-bold bg-slate-500/20 text-slate-400 border border-slate-500/30'
+                    : 'text-[9px] px-2.5 py-0.5 rounded-full inline-block mt-1 font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+            }
+
+            document.getElementById('user-avatar').src = STATE.activeUser.avatar;
+
+            const menu = document.getElementById('sidebar-menu');
+            menu.innerHTML = '';
+
+            const allTabs = [
+                { id: 'dashboard', name: 'الرئيسية', icon: 'fa-gauge-high' },
+                { id: 'chat', name: 'الشات العام 💬', icon: 'fa-comments' },
+                { id: 'tasks', name: 'لوحة المهام (Trello)', icon: 'fa-list-check' },
+                { id: 'files', name: 'الملفات والمستندات', icon: 'fa-folder-open' },
+                { id: 'users-status', name: 'المتواجدون والمراقبة 👁️', icon: 'fa-eye' }, // التبويب الجديد المضاف
+                { id: 'admin-users', name: 'الإدارة واليوزرات 🛡️', icon: 'fa-users-gear' },
+                { id: 'stats', name: 'إحصائيات المنصة', icon: 'fa-chart-pie' },
+                { id: 'audits', name: 'سجل النشاط (Audit Log)', icon: 'fa-shield-halved' },
+                { id: 'settings', name: 'الصيانة والتهيئة', icon: 'fa-sliders' }
+            ];
+
+            if (STATE.activeUser.status === 'pending') {
+                menu.innerHTML = `
+                    <div class="p-3 rounded-xl text-xs font-semibold bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center gap-2">
+                        <i class="fa-solid fa-hourglass-half animate-spin"></i>
+                        <span>بانتظار موافقة الإدارة...</span>
+                    </div>
+                `;
+                return;
+            }
+
+            allTabs.forEach(tab => {
+                if (hasAccessToTab(tab.id)) {
+                    const isActive = STATE.activeTab === tab.id;
+                    const tabBtn = document.createElement('a');
+                    tabBtn.href = '#';
+                    tabBtn.onclick = (e) => {
+                        e.preventDefault();
+                        switchTab(tab.id);
+                    };
+                    tabBtn.className = `flex items-center gap-3 px-3 py-3 rounded-xl text-xs md:text-sm font-semibold transition-all active:scale-95 ${
+                        isActive 
+                        ? 'bg-brand-600 text-white shadow-md shadow-brand-600/10 scale-[1.01]' 
+                        : 'text-slate-400 hover:text-white hover:bg-slate-800'
+                    }`;
+                    tabBtn.innerHTML = `
+                        <i class="fa-solid ${tab.icon} w-5 text-center text-sm ${isActive ? 'text-white' : 'text-slate-400'}"></i>
+                        <span>${tab.name}</span>
+                    `;
+                    menu.appendChild(tabBtn);
+                }
+            });
+        }
+
+        // التبديل وتحديث العرض داخل التبويب النشط
+        function switchTab(tabId) {
+            if (hasAccessToTab(tabId)) {
+                STATE.activeTab = tabId;
+                updateSidebar();
+                renderActiveTab();
+                
+                // إغلاق القائمة الجانبية تلقائياً في الهاتف عند التبديل
+                const sidebar = document.getElementById('app-sidebar');
+                const overlay = document.getElementById('sidebar-overlay');
+                if (sidebar && !sidebar.classList.contains('translate-x-full')) {
+                    sidebar.classList.add('translate-x-full');
+                    if (overlay) overlay.classList.add('hidden');
+                }
+            }
+        }
+
+        function renderActiveTab() {
+            const container = document.getElementById('view-container');
+            const titleEl = document.getElementById('current-tab-title');
+            
+            const tabTitles = {
+                dashboard: 'لوحة التحكم الرئيسية والمؤشرات',
+                chat: 'الشات العام الجماعي 💬 (مراقبة مشددة)',
+                tasks: 'إدارة وتتبع مهام الفريق',
+                files: 'مستودع الأرشيف المركزي الآمن',
+                'users-status': 'رصد المتواجدين حالياً ومراقبة الجلسات الحية 👁️',
+                'admin-users': 'إدارة الأعضاء والصلاحيات وبناء اليوزرات 🛡️',
+                stats: 'تحليلات الأداء والإحصائيات المتقدمة',
+                audits: 'سجل العمليات الأمني الفوري (Audit Logs)',
+                settings: 'لوحة التحكم بالنظام والنسخ الاحتياطي',
+                pending: 'حسابك معلق بانتظار موافقة أحمد رامي'
+            };
+            
+            titleEl.innerText = tabTitles[STATE.activeTab] || 'الرئيسية';
+            
+            // تحديث شريط الإعلان المثبت
+            const pinnedMsg = STATE.chatMessages.find(m => m.pinned);
+            const ticker = document.getElementById('pinned-ticker');
+            if (pinnedMsg) {
+                const sender = STATE.users.find(u => u.id === pinnedMsg.senderId);
+                const showSenderName = (STATE.activeUser.role === 'owner' || STATE.activeUser.role === 'admin') 
+                    ? (sender ? sender.name : 'مجهول') 
+                    : 'الإدارة 👑';
+                ticker.innerText = `[${showSenderName}]: ${pinnedMsg.text}`;
+            } else {
+                ticker.innerText = 'لا توجد إعلانات عاجلة مثبتة من الإدارة حالياً.';
+            }
+
+            switch(STATE.activeTab) {
+                case 'dashboard':
+                    renderDashboardView(container);
+                    break;
+                case 'chat':
+                    renderChatView(container);
+                    break;
+                case 'tasks':
+                    renderTasksView(container);
+                    break;
+                case 'files':
+                    renderFilesView(container);
+                    break;
+                case 'users-status':
+                    renderUsersStatusView(container);
+                    break;
+                case 'admin-users':
+                    renderAdminUsersView(container);
+                    break;
+                case 'stats':
+                    renderStatsView(container);
+                    break;
+                case 'audits':
+                    renderAuditsView(container);
+                    break;
+                case 'settings':
+                    renderSettingsView(container);
+                    break;
+                case 'pending':
+                    renderPendingView(container);
+                    break;
+            }
+        }
+
+        function renderPendingView(container) {
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-16 px-4 text-center max-w-lg mx-auto">
+                    <div class="w-20 h-20 rounded-full bg-amber-500/10 text-amber-500 flex items-center justify-center text-3xl mb-6 border border-amber-500/20 animate-pulse animate-bounce-short">
+                        <i class="fa-regular fa-clock"></i>
+                    </div>
+                    <h2 class="text-xl md:text-2xl font-bold mb-3">حسابك قيد المراجعة الأمنية والتدقيق</h2>
+                    <p class="text-slate-500 dark:text-slate-400 text-xs md:text-sm leading-relaxed mb-6">
+                        أهلاً بك <strong>${STATE.activeUser.name}</strong>. يتبع مشروع <strong>5 Hub Team</strong> سياسة خصوصية وأمان عالية للغاية. حسابك معلق الآن وبانتظار موافقة مالك المنصة <strong>أحمد رامي</strong> أو أحد المشرفين المفوضين لتتمكن من الانضمام.
+                    </p>
+                    <div class="p-4 bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 w-full text-right text-xs space-y-2">
+                        <span class="font-bold text-amber-500 block mb-1">💡 لتجاوز هذه الشاشة واختبار التفعيل الفوري:</span>
+                        <p class="text-slate-500 dark:text-slate-400 leading-relaxed">
+                            اختر <strong class="text-amber-500">المالك (أحمد رامي) 👑</strong> من شريط المحاكاة العلوي، واذهب لتبويب <strong>"الإدارة واليوزرات"</strong> لتفعيل هذا الحساب بضغطة زر واحدة!
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderDashboardView(container) {
+            const role = STATE.activeUser.role;
+            const completedTasks = STATE.tasks.filter(t => t.status === 'done').length;
+            const totalTasks = STATE.tasks.length;
+            const progressPercent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+            let extraWidget = '';
+            
+            if (role === 'owner' || role === 'admin') {
+                const pendingUsersCount = STATE.users.filter(u => u.status === 'pending').length;
+                extraWidget = `
+                    <div class="bg-gradient-to-br from-blue-600 to-indigo-700 text-white rounded-2xl p-5 shadow-lg relative overflow-hidden">
+                        <div class="absolute right-0 bottom-0 text-white/5 text-9xl font-black transform translate-y-6 translate-x-4"><i class="fa-solid fa-users"></i></div>
+                        <h4 class="text-xs font-semibold text-blue-100 uppercase tracking-wider">طلبات انضمام معلقة</h4>
+                        <p class="text-3xl font-extrabold mt-2">${pendingUsersCount}</p>
+                        <button onclick="switchTab('admin-users')" class="mt-4 text-xs font-bold bg-white text-blue-700 py-2 px-4 rounded-xl hover:bg-blue-50 transition-all flex items-center gap-1 active:scale-95">
+                            <span>مراجعة طلبات الانضمام</span> <i class="fa-solid fa-chevron-left text-[10px]"></i>
+                        </button>
+                    </div>
+                `;
+            } else {
+                const myTasksCount = STATE.tasks.filter(t => t.assignedTo === STATE.activeUser.id).length;
+                extraWidget = `
+                    <div class="bg-gradient-to-br from-emerald-600 to-teal-700 text-white rounded-2xl p-5 shadow-lg relative overflow-hidden">
+                        <div class="absolute right-0 bottom-0 text-white/5 text-9xl font-black transform translate-y-6 translate-x-4"><i class="fa-solid fa-clipboard-list"></i></div>
+                        <h4 class="text-xs font-semibold text-emerald-100 uppercase tracking-wider">مهامي المسندة لي</h4>
+                        <p class="text-3xl font-extrabold mt-2">${myTasksCount}</p>
+                        <button onclick="switchTab('tasks')" class="mt-4 text-xs font-bold bg-white text-emerald-700 py-2 px-4 rounded-xl hover:bg-emerald-50 transition-all flex items-center gap-1 active:scale-95">
+                            <span>الذهاب لجدول مهامي</span> <i class="fa-solid fa-chevron-left text-[10px]"></i>
+                        </button>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-6">
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xs font-semibold text-slate-400">معدل إنجاز تاسكات المشروع</span>
+                                <span class="text-xs bg-brand-500/10 text-brand-500 px-2.5 py-0.5 rounded-full font-bold">${progressPercent}%</span>
+                            </div>
+                            <div class="w-full bg-slate-100 dark:bg-slate-800 rounded-full h-2.5 mb-2">
+                                <div class="bg-brand-600 h-2.5 rounded-full transition-all duration-500" style="width: ${progressPercent}%"></div>
+                            </div>
+                        </div>
+                        <div class="text-xs text-slate-500 dark:text-slate-400 mt-2">
+                            تم إنهاء <span class="font-bold text-slate-800 dark:text-white">${completedTasks}</span> من أصل <span class="font-bold text-slate-800 dark:text-white">${totalTasks}</span> مهام للمشروع.
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                        <div class="flex items-center justify-between">
+                            <div>
+                                <span class="text-xs font-semibold text-slate-400 block mb-1">النشاط الكلي في الشات العام</span>
+                                <span class="text-2xl font-bold">${STATE.chatMessages.length} رسالة</span>
+                            </div>
+                            <div class="w-10 h-10 rounded-xl bg-emerald-500/10 text-emerald-500 flex items-center justify-center text-lg">
+                                <i class="fa-solid fa-comments"></i>
+                            </div>
+                        </div>
+                        <button onclick="switchTab('chat')" class="text-xs text-brand-500 hover:text-brand-600 font-bold mt-4 flex items-center gap-1 self-start">
+                            <span>فتح الشات العام والمناقشة</span> <i class="fa-solid fa-chevron-left text-[10px]"></i>
+                        </button>
+                    </div>
+
+                    ${extraWidget}
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
+                        <h3 class="font-bold text-sm mb-4 flex items-center gap-2 border-b border-slate-100 dark:border-slate-800 pb-3">
+                            <i class="fa-solid fa-list-check text-brand-500"></i>
+                            <span>أحدث المهام النشطة</span>
+                        </h3>
+                        <div class="space-y-3 flex-1 overflow-y-auto max-h-[300px]">
+                            ${renderDashboardTasks()}
+                        </div>
+                    </div>
+
+                    <div class="bg-gradient-to-br from-slate-900 via-slate-950 to-slate-900 border border-slate-800 text-white rounded-2xl p-5 shadow-lg flex flex-col justify-between">
+                        <div>
+                            <div class="flex items-center gap-2 text-rose-500 mb-3 font-bold text-sm">
+                                <i class="fa-solid fa-shield-halved text-lg"></i>
+                                <span>عزل الخصوصية والأمان الفعال 🔒</span>
+                            </div>
+                            <p class="text-xs text-slate-300 leading-relaxed space-y-2">
+                                تم تطبيق حماية خصوصية صارمة على هذا الإصدار بنجاح:
+                            </p>
+                            <ul class="text-[11px] text-slate-400 space-y-1.5 mt-3 list-disc list-inside leading-relaxed">
+                                <li><strong>لا يرى أي مستخدم عادي (Member)</strong> قائمة الأعضاء الآخرين أو المشرفين ولا عددهم الكلي لحجب البيانات الحساسة.</li>
+                                <li>تظهر كافة رسائل الأعضاء الآخرين في الشات بشكل <strong>"مجهول 👤"</strong> لجميع الأعضاء لضمان السرية والوقاية من التكتلات.</li>
+                                <li>رسائل المالك والـ Admin تظهر للأعضاء بمسمى <strong>"الإدارة 👑"</strong> فقط، وتظهر بأسمائهم للمشرفين.</li>
+                                <li>المحادثة مقتصرة تماماً على الشات العام؛ لا وجود للمحادثات الخاصة أو المجموعات الجانبية نهائياً.</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderDashboardTasks() {
+            const displayTasks = STATE.tasks.slice(0, 3);
+
+            if (displayTasks.length === 0) {
+                return `<div class="text-center py-8 text-xs text-slate-400">لا توجد مهام نشطة مسندة حالياً للعمل.</div>`;
+            }
+
+            return displayTasks.map(t => {
+                const priorityColors = {
+                    'عالية': 'bg-rose-500/10 text-rose-500 border border-rose-500/20',
+                    'متوسطة': 'bg-amber-500/10 text-amber-500 border border-amber-500/20',
+                    'منخفضة': 'bg-slate-500/10 text-slate-400 border border-slate-500/20'
+                };
+                return `
+                    <div class="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-2 text-xs">
+                        <div>
+                            <span class="font-semibold text-slate-800 dark:text-slate-100 block mb-1">${t.title}</span>
+                            <span class="text-[10px] text-slate-400">تاريخ التسليم: ${t.deadline}</span>
+                        </div>
+                        <span class="px-2 py-0.5 rounded text-[10px] ${priorityColors[t.priority] || ''}">${t.priority}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // التبويب الجديد لرصد المتواجدين حالياً ومراقبة تحركاتهم برمجياً (لأحمد رامي والمشرفين)
+        function renderUsersStatusView(container) {
+            const isOwner = STATE.activeUser.role === 'owner';
+            const monitoredUser = STATE.users.find(u => u.id === STATE.monitoredUserId);
+
+            container.innerHTML = `
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 font-cairo">
+                    
+                    <!-- قائمة الأعضاء ومؤشرات الاتصال التلقائية -->
+                    <div class="lg:col-span-1 bg-white dark:bg-slate-900 p-5 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col">
+                        <div class="border-b border-slate-100 dark:border-slate-800 pb-3 mb-4">
+                            <h4 class="font-bold text-xs text-slate-400 uppercase tracking-wider">الأعضاء النشطين وحالة الاتصال</h4>
+                            <p class="text-[10px] text-amber-500 mt-1">تتحدث مؤشرات الاتصال والنشاط تلقائياً كل 4 ثوانٍ ⚡</p>
+                        </div>
+
+                        <div class="space-y-3 flex-1 overflow-y-auto max-h-[500px]" id="monitor-users-list">
+                            ${STATE.users.map(u => {
+                                const isMe = u.id === STATE.activeUser.id;
+                                const isSelected = u.id === STATE.monitoredUserId;
+                                
+                                return `
+                                    <div class="p-3 rounded-xl border transition-all ${isSelected ? 'bg-brand-600/10 border-brand-500 shadow-md' : 'bg-slate-50 dark:bg-slate-950 border-slate-200 dark:border-slate-850 hover:border-slate-300 dark:hover:border-slate-800'} text-xs flex flex-col gap-2">
+                                        <div class="flex items-center justify-between gap-2">
+                                            <div class="flex items-center gap-2.5">
+                                                <img src="${u.avatar}" class="w-8 h-8 rounded-full border border-slate-200 dark:border-slate-800 object-cover" alt="Avatar">
+                                                <div>
+                                                    <span class="font-bold block text-slate-850 dark:text-white">${u.name} ${isMe ? '<span class="text-[9px] text-brand-500">(أنا)</span>' : ''}</span>
+                                                    <span class="text-[9px] text-slate-400 block font-mono uppercase">${u.role}</span>
+                                                </div>
+                                            </div>
+                                            
+                                            <!-- علامة بتتغير للاتصال وغير متصل -->
+                                            <div class="flex items-center gap-1.5">
+                                                ${u.online ? `
+                                                    <span class="relative flex h-2 w-2">
+                                                      <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                                                      <span class="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
+                                                    </span>
+                                                    <span class="text-[10px] text-emerald-500 font-bold">متصل</span>
+                                                ` : `
+                                                    <span class="relative inline-flex rounded-full h-2 w-2 bg-slate-400 dark:bg-slate-700"></span>
+                                                    <span class="text-[10px] text-slate-400 font-semibold">غير متصل</span>
+                                                `}
+                                            </div>
+                                        </div>
+
+                                        <div class="text-[10px] bg-slate-100 dark:bg-slate-900/60 p-2 rounded-lg text-slate-500 dark:text-slate-400 leading-relaxed font-sans">
+                                            🔍 آخر نشاط: <strong class="text-slate-700 dark:text-slate-300">${u.currentActivity}</strong>
+                                        </div>
+
+                                        <!-- زر بدء المراقبة والتحكم المتاح فقط للمالك أحمد رامي -->
+                                        ${isOwner && !isMe ? `
+                                            <button onclick="startLiveSpyFeed('${u.id}')" class="w-full mt-1.5 py-1.5 bg-slate-200 hover:bg-brand-600 dark:bg-slate-800 dark:hover:bg-brand-600 text-slate-700 dark:text-slate-300 hover:text-white rounded-lg text-[10px] font-bold transition-all flex items-center justify-center gap-1 active:scale-95">
+                                                <i class="fa-solid fa-satellite-dish"></i>
+                                                <span>بث حي ومراقبة 📡</span>
+                                            </button>
+                                        ` : ''}
+                                    </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+
+                    <!-- شاشة الرصد التجسسي الأمني الحصري للمالك أحمد رامي -->
+                    <div class="lg:col-span-2 bg-slate-900 text-white rounded-2xl p-5 border border-slate-800 shadow-lg flex flex-col h-auto lg:h-[580px]">
+                        <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                            <div class="flex items-center gap-2">
+                                <span class="w-3 h-3 rounded-full bg-rose-500 animate-pulse"></span>
+                                <h4 class="font-bold text-xs md:text-sm text-slate-300">رادار المراقبة الأمني النشط 📡</h4>
+                            </div>
+                            <span class="text-[9px] bg-rose-500/10 text-rose-400 border border-rose-900/30 px-2 py-0.5 rounded font-mono font-bold uppercase">Secured Spy Connection</span>
+                        </div>
+
+                        ${monitoredUser ? `
+                            <div class="flex-1 flex flex-col space-y-4 overflow-hidden">
+                                <div class="p-3 bg-slate-950 rounded-xl border border-slate-800 flex items-center justify-between gap-3 text-xs">
+                                    <div class="flex items-center gap-2.5">
+                                        <img src="${monitoredUser.avatar}" class="w-10 h-10 rounded-full border border-slate-800 object-cover" alt="Avatar">
+                                        <div>
+                                            <span class="font-bold text-white block text-sm">${monitoredUser.name}</span>
+                                            <span class="text-[10px] text-slate-400 block font-mono">ID: ${monitoredUser.id}</span>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="px-2 py-1 rounded bg-slate-900 text-slate-300 block text-[10px] font-semibold border border-slate-800">${monitoredUser.online ? 'متصل بالمنصة ✅' : 'خارج المنصة 💤'}</span>
+                                    </div>
+                                </div>
+
+                                <div class="flex-1 bg-slate-950 rounded-xl p-4 border border-slate-800 flex flex-col overflow-hidden">
+                                    <div class="text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-2 font-mono flex items-center justify-between">
+                                        <span>LIVE CONSOLE READOUT:</span>
+                                        <span class="text-emerald-500">DYNAMIC REFRESH ACTIVE</span>
+                                    </div>
+                                    <div class="flex-1 overflow-y-auto space-y-2 text-xs font-mono text-emerald-400 scroll-smooth leading-relaxed" id="live-spy-terminal">
+                                        ${(STATE.spyLogs[monitoredUser.id] || []).map(log => `
+                                            <div class="hover:bg-slate-900/50 p-1 rounded transition-colors">${log}</div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                                <div class="flex justify-between items-center text-[10px] text-slate-400">
+                                    <span>نظام مراقبة سري - خاضع لحماية تشفير 256 بت</span>
+                                    <button onclick="stopLiveSpy()" class="text-rose-450 hover:underline"><i class="fa-solid fa-times-circle"></i> إغلاق الرادار</button>
+                                </div>
+                            </div>
+                        ` : `
+                            <div class="flex-1 flex flex-col items-center justify-center text-center p-6 text-xs text-slate-400 space-y-3">
+                                <div class="w-16 h-16 bg-slate-800/60 rounded-full flex items-center justify-center text-2xl text-slate-500 border border-slate-700 animate-pulse">
+                                    <i class="fa-solid fa-satellite"></i>
+                                </div>
+                                <p class="max-w-xs leading-relaxed font-cairo">
+                                    بصفتك **أحمد رامي (المالك)**، يرجى اختيار أي عضو من القائمة الجانبية والضغط على **"بث حي ومراقبة"** لبدء رصد تحركاته ونشاطه الفعلي داخل المنصة وتنزيل البث المباشر لجهازه.
+                                </p>
+                            </div>
+                        `}
+                    </div>
+                </div>
+            `;
+            
+            // التمرير التلقائي لأسفل كونسول المراقبة
+            const terminal = document.getElementById('live-spy-terminal');
+            if (terminal) terminal.scrollTop = terminal.scrollHeight;
+        }
+
+        // بدء رصد وبث حركة المستخدم المستهدف
+        function startLiveSpyFeed(userId) {
+            STATE.monitoredUserId = userId;
+            
+            if (!STATE.spyLogs[userId]) {
+                STATE.spyLogs[userId] = [
+                    `[${new Date().toLocaleTimeString('ar-EG')}] تم بدء اتصال التجسس المباشر 📡`,
+                    `[${new Date().toLocaleTimeString('ar-EG')}] جاري التحقق من كود جلسة المتصفح...`,
+                    `[${new Date().toLocaleTimeString('ar-EG')}] بروتوكول الرصد الأمني نشط.`
+                ];
+            } else {
+                STATE.spyLogs[userId].push(`[${new Date().toLocaleTimeString('ar-EG')}] تم إعادة توجيه الرادار الأمني للمستخدم.`);
+            }
+
+            saveStateToStorage();
+            renderUsersStatusView(document.getElementById('view-container'));
+            showToast('تم بدء البث المباشر ومراقبة الجلسة بنجاح 📡', 'success');
+        }
+
+        // إيقاف بث المراقبة الحية
+        function stopLiveSpy() {
+            STATE.monitoredUserId = null;
+            saveStateToStorage();
+            renderUsersStatusView(document.getElementById('view-container'));
+            showToast('تم إيقاف المراقبة وإغلاق كونسول الرصد', 'info');
+        }
+
+        // الشات العام وعزل هويات الأعضاء
+        function renderChatView(container) {
+            const isStaff = STATE.activeUser.role === 'owner' || STATE.activeUser.role === 'admin';
+            
+            container.innerHTML = `
+                <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 h-auto lg:h-[calc(100vh-12rem)] min-h-[500px]">
+                    <div class="lg:col-span-3 flex flex-col bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden h-full">
+                        
+                        <div class="p-4 border-b border-slate-200 dark:border-slate-800 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 bg-slate-50 dark:bg-slate-950">
+                            <div class="flex items-center gap-3">
+                                <div class="w-10 h-10 rounded-xl bg-brand-500/10 text-brand-500 flex items-center justify-center text-lg shrink-0">
+                                    <i class="fa-solid fa-comments"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-bold text-xs md:text-sm text-slate-850 dark:text-white">قناة المحادثة الموحدة والوحيدة بالفريق</h4>
+                                    <p class="text-[10px] text-slate-400 leading-relaxed">تجمع كافة أعضاء الفريق المفعلين - خاضعة لقواعد السرية والتجهيل التامة للأعضاء</p>
+                                </div>
+                            </div>
+                            
+                            <div id="mute-status-badge" class="${STATE.chatRestricted ? '' : 'hidden'} text-[10px] bg-rose-500/10 text-rose-500 px-3 py-1 rounded-full border border-rose-500/20 font-bold animate-pulse shrink-0 self-start sm:self-center">
+                                🔒 الكتابة معطلة مؤقتاً للأعضاء
+                            </div>
+                        </div>
+
+                        <div id="chat-messages-container" class="flex-1 overflow-y-auto p-4 space-y-4">
+                            ${renderChatMessages()}
+                        </div>
+
+                        <div id="typing-indicator" class="px-4 py-1.5 text-[10px] text-slate-400 dark:text-slate-550 flex items-center gap-2 bg-slate-50 dark:bg-slate-950/20"></div>
+
+                        <div class="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+                            ${STATE.chatRestricted && !isStaff ? `
+                                <div class="bg-rose-500/10 border border-rose-500/20 text-rose-500 text-center rounded-xl p-3 text-xs font-bold leading-relaxed">
+                                    عذراً، الشات مغلق مؤقتاً للكتابة بقرار إداري من المالك أحمد رامي.
+                                </div>
+                            ` : `
+                                <div class="flex flex-col sm:flex-row items-stretch sm:items-center gap-2">
+                                    <div class="flex items-center gap-1 justify-between sm:justify-start">
+                                        <button onclick="triggerDummyAttachment()" class="p-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 text-xs transition-all" title="إرفاق ملف">
+                                            <i class="fa-solid fa-paperclip text-sm"></i>
+                                        </button>
+                                        
+                                        <div class="flex items-center gap-1">
+                                            <button onclick="insertQuickEmoji('👍')" class="p-2 px-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-sm active:scale-90" title="أرسل إيموجي">👍</button>
+                                            <button onclick="insertQuickEmoji('🔥')" class="p-2 px-3 bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 rounded-lg text-sm active:scale-90" title="أرسل إيموجي حماسي">🔥</button>
+                                        </div>
+                                    </div>
+
+                                    <div class="flex-1 flex gap-2">
+                                        <input type="text" id="chat-input" onkeypress="handleChatKeyPress(event)" placeholder="اكتب رسالتك للمناقشة..." class="flex-1 px-4 py-2.5 text-xs md:text-sm bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl focus:outline-none focus:border-brand-500 text-slate-800 dark:text-100">
+                                        
+                                        <button onclick="sendChatMessage()" class="bg-brand-600 hover:bg-brand-700 text-white p-2.5 px-4 rounded-xl text-xs md:text-sm font-bold transition-all flex items-center gap-1.5 shadow-md shadow-brand-600/10 active:scale-95">
+                                            <span>إرسال</span>
+                                            <i class="fa-solid fa-paper-plane transform rotate-180 text-xs"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            `}
+                        </div>
+                    </div>
+
+                    <!-- Side options inside Chat view -->
+                    <div class="space-y-6">
+                        <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm">
+                            <h5 class="font-bold text-xs mb-2.5 text-slate-400">البحث داخل الشات</h5>
+                            <div class="relative">
+                                <input type="text" id="chat-search" oninput="handleChatSearch(this.value)" placeholder="ابحث عن رسالة أو ملف..." class="w-full pl-8 pr-3 py-2 text-xs rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 focus:outline-none focus:border-brand-500 text-slate-800 dark:text-white">
+                                <i class="fa-solid fa-magnifying-glass absolute left-2.5 top-3.5 text-slate-400 text-[10px]"></i>
+                            </div>
+                        </div>
+
+                        <div class="bg-white dark:bg-slate-900 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col max-h-[250px]">
+                            <h5 class="font-bold text-xs mb-3 text-slate-400 flex items-center gap-1.5">
+                                <i class="fa-solid fa-thumbtack text-amber-500 animate-bounce-short"></i>
+                                <span>الرسائل المثبتة من الإدارة</span>
+                            </h5>
+                            <div class="space-y-2.5 flex-1 overflow-y-auto" id="pinned-messages-list">
+                                ${renderPinnedChatMessages()}
+                            </div>
+                        </div>
+
+                        ${isStaff ? `
+                            <div class="bg-slate-900 border border-slate-850 text-white rounded-2xl p-4 shadow-md space-y-2">
+                                <h5 class="font-bold text-xs text-rose-400 mb-3 flex items-center gap-1.5">
+                                    <i class="fa-solid fa-screwdriver-wrench"></i>
+                                    <span>تحكم الإشراف والسرية بالشات</span>
+                                </h5>
+                                <button onclick="toggleChatRestriction()" class="w-full text-right text-[11px] bg-slate-800 hover:bg-slate-750 px-3 py-2.5 rounded-xl flex items-center justify-between transition-colors">
+                                    <span>تقييد الكتابة للأعضاء</span>
+                                    <span class="w-3 h-3 rounded-full ${STATE.chatRestricted ? 'bg-red-500 animate-pulse' : 'bg-green-500'}"></span>
+                                </button>
+                                <button onclick="confirmClearAllChat()" class="w-full text-right text-[11px] bg-rose-950/20 hover:bg-rose-950/40 text-rose-400 px-3 py-2.5 rounded-xl flex items-center justify-between border border-rose-900/30 transition-colors">
+                                    <span>تصفير وسجلات المحادثة بالكامل</span>
+                                    <i class="fa-regular fa-trash-can text-rose-550"></i>
+                                </button>
+                            </div>
+                        ` : ''}
+                    </div>
+                </div>
+            `;
+            
+            scrollChatToBottom();
+        }
+
+        function renderChatMessages() {
+            let filteredMessages = STATE.chatMessages;
+            if (STATE.searchQuery.trim() !== '') {
+                filteredMessages = STATE.chatMessages.filter(m => m.text.toLowerCase().includes(STATE.searchQuery.toLowerCase()));
+            }
+
+            if (filteredMessages.length === 0) {
+                return `<div class="text-center py-12 text-xs text-slate-400 font-cairo">لا توجد رسائل متطابقة مع البحث.</div>`;
+            }
+
+            const currentUserId = STATE.activeUser.id;
+            const isStaff = STATE.activeUser.role === 'owner' || STATE.activeUser.role === 'admin';
+
+            return filteredMessages.map(msg => {
+                const sender = STATE.users.find(u => u.id === msg.senderId);
+                const isMe = msg.senderId === currentUserId;
+                
+                let displayName = 'مجهول 👤';
+                let isSenderStaff = false;
+                let customAvatar = 'https://placehold.co/100x100/64748b/ffffff?text=?';
+
+                if (sender) {
+                    isSenderStaff = sender.role === 'owner' || sender.role === 'admin';
+                    customAvatar = sender.avatar;
+
+                    if (isMe) {
+                        displayName = sender.name + ' (أنا)';
+                    } else if (isStaff) {
+                        displayName = sender.name;
+                    } else {
+                        if (isSenderStaff) {
+                            displayName = 'الإدارة 👑';
+                        } else {
+                            displayName = 'مجهول 👤';
+                            customAvatar = 'https://placehold.co/100x100/475569/ffffff?text=?'; 
+                        }
+                    }
+                }
+
+                let bgClass = 'bg-slate-100 dark:bg-slate-950 text-slate-800 dark:text-slate-100 border border-slate-200/50 dark:border-slate-850';
+                if (isMe) {
+                    bgClass = 'bg-brand-600 text-white';
+                } else if (isSenderStaff) {
+                    bgClass = 'bg-amber-500/10 border border-amber-500/20 text-slate-800 dark:text-slate-100';
+                }
+
+                let actionBtns = '';
+                const canDelete = isStaff || isMe;
+                const canEdit = isMe && msg.type === 'text';
+
+                if (canDelete || canEdit || isStaff) {
+                    actionBtns = `
+                        <div class="opacity-0 group-hover:opacity-100 transition-opacity flex items-center gap-1.5 ml-2">
+                            ${canEdit ? `<button onclick="editChatMessagePrompt('${msg.id}')" class="text-[10px] text-brand-500 hover:underline p-1" title="تعديل"><i class="fa-regular fa-pen-to-square"></i></button>` : ''}
+                            ${canDelete ? `<button onclick="confirmDeleteChatMessage('${msg.id}')" class="text-[10px] text-rose-500 hover:underline p-1" title="حذف لدى الجميع"><i class="fa-regular fa-trash-can"></i></button>` : ''}
+                            ${isStaff ? `<button onclick="togglePinMessage('${msg.id}')" class="text-[10px] text-amber-500 hover:underline p-1" title="تثبيت"><i class="fa-solid fa-thumbtack ${msg.pinned ? 'rotate-45' : ''}"></i></button>` : ''}
+                        </div>
+                    `;
+                }
+
+                return `
+                    <div class="flex items-start gap-2.5 group ${isMe ? 'flex-row-reverse' : ''}">
+                        <img src="${customAvatar}" alt="Avatar" class="w-8 h-8 rounded-full border border-slate-200 dark:border-slate-800 object-cover shadow-sm shrink-0">
+                        
+                        <div class="max-w-[85%] sm:max-w-[70%]">
+                            <div class="flex items-center gap-1.5 mb-1 ${isMe ? 'flex-row-reverse' : ''}">
+                                <span class="text-[11px] font-bold ${isSenderStaff ? 'text-amber-500' : 'text-slate-500 dark:text-slate-400'}">${displayName}</span>
+                                <span class="text-[9px] text-slate-400">${msg.timestamp}</span>
+                                ${msg.edited ? `<span class="text-[9px] text-slate-400 font-semibold">(مُعدلة)</span>` : ''}
+                                ${msg.pinned ? `<span class="text-[9px] bg-amber-500/20 text-amber-500 px-1 rounded"><i class="fa-solid fa-thumbtack"></i> مثبتة</span>` : ''}
+                            </div>
+
+                            <div class="p-3 rounded-2xl text-[11px] md:text-xs leading-relaxed shadow-sm ${bgClass} ${isMe ? 'rounded-tl-none' : 'rounded-tr-none'}">
+                                ${msg.type === 'file' ? `
+                                    <div class="flex items-center gap-2.5">
+                                        <div class="w-8 h-8 rounded bg-white/20 flex items-center justify-center text-sm font-bold shrink-0">
+                                            <i class="fa-solid fa-file-arrow-down"></i>
+                                        </div>
+                                        <div>
+                                            <span class="font-bold block text-left truncate max-w-[150px] sm:max-w-xs">${msg.text}</span>
+                                            <span class="text-[9px] text-slate-400 block">${msg.fileSize || 'N/A'}</span>
+                                        </div>
+                                    </div>
+                                ` : msg.type === 'image' ? `
+                                    <div class="space-y-1.5">
+                                        <img src="${msg.fileUrl}" alt="Attachment" class="max-h-40 rounded border border-white/10 shadow object-cover">
+                                        <span>${msg.text}</span>
+                                    </div>
+                                ` : `
+                                    <p class="whitespace-pre-wrap break-words">${msg.text}</p>
+                                `}
+                            </div>
+                        </div>
+
+                        ${actionBtns}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderPinnedChatMessages() {
+            const pinned = STATE.chatMessages.filter(m => m.pinned);
+            if (pinned.length === 0) {
+                return `<div class="text-center py-4 text-[10px] text-slate-400 font-cairo">لا توجد رسائل مثبتة حالياً.</div>`;
+            }
+
+            return pinned.map(m => {
+                const sender = STATE.users.find(u => u.id === m.senderId);
+                const senderName = (STATE.activeUser.role === 'owner' || STATE.activeUser.role === 'admin') 
+                    ? (sender ? sender.name : 'مجهول') 
+                    : 'الإدارة 👑';
+                return `
+                    <div class="p-2 bg-amber-500/10 rounded-xl border border-amber-500/20 text-[11px] relative group leading-relaxed">
+                        <div class="font-bold text-amber-600 dark:text-amber-400 mb-0.5">${senderName}</div>
+                        <div class="text-slate-600 dark:text-slate-300 truncate">${m.text}</div>
+                        ${STATE.activeUser.role === 'owner' || STATE.activeUser.role === 'admin' ? `
+                            <button onclick="togglePinMessage('${m.id}')" class="absolute top-1 left-1.5 opacity-0 group-hover:opacity-100 text-rose-500 hover:underline p-1"><i class="fa-solid fa-times text-[9px]"></i></button>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function sendChatMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+            if (!text) return;
+
+            const newMsg = {
+                id: 'msg-' + Date.now(),
+                senderId: STATE.activeUser.id,
+                text: text,
+                type: 'text',
+                timestamp: 'اليوم، ' + new Date().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'}),
+                edited: false,
+                pinned: false
+            };
+
+            STATE.chatMessages.push(newMsg);
+            saveStateToStorage();
+            input.value = '';
+
+            logSystemActivity('إرسال رسالة شات', STATE.activeUser.name, `أرسل رسالة نصية جديدة في القناة الموحدة.`);
+
+            renderChatView(document.getElementById('view-container'));
+            scrollChatToBottom();
+            showToast('تم إرسال الرسالة بنجاح', 'success');
+        }
+
+        function triggerDummyAttachment() {
+            const isImage = Math.random() > 0.5;
+            const newMsg = {
+                id: 'msg-' + Date.now(),
+                senderId: STATE.activeUser.id,
+                text: isImage ? 'تم رفع لقطة شاشة للخطأ البرمجي 📷' : 'مخطط_قاعدة_البيانات_الجديدة.pdf',
+                type: isImage ? 'image' : 'file',
+                fileUrl: 'https://placehold.co/400x300/1e293b/ffffff?text=5+Hub+Team+Visual',
+                fileSize: isImage ? '1.1 MB' : '3.4 MB',
+                timestamp: 'اليوم، ' + new Date().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'}),
+                edited: false,
+                pinned: false
+            };
+
+            STATE.chatMessages.push(newMsg);
+            saveStateToStorage();
+            renderChatView(document.getElementById('view-container'));
+            scrollChatToBottom();
+            showToast('تم إرفاق الملف بنجاح وإرساله للشات', 'success');
+        }
+
+        function insertQuickEmoji(emoji) {
+            const input = document.getElementById('chat-input');
+            if (input) {
+                input.value += emoji;
+                input.focus();
+            }
+        }
+
+        function handleChatKeyPress(event) {
+            if (event.key === 'Enter') {
+                sendChatMessage();
+            }
+        }
+
+        function handleChatSearch(val) {
+            STATE.searchQuery = val;
+            document.getElementById('chat-messages-container').innerHTML = renderChatMessages();
+        }
+
+        function editChatMessagePrompt(msgId) {
+            const msg = STATE.chatMessages.find(m => m.id === msgId);
+            if (!msg) return;
+
+            const newText = prompt("قم بتعديل رسالتك المحددة:", msg.text);
+            if (newText !== null && newText.trim() !== "") {
+                msg.text = newText;
+                msg.edited = true;
+                saveStateToStorage();
+                logSystemActivity('تعديل رسالة شات', STATE.activeUser.name, `عدل رسالته الخاصة لتصبح: "${newText}"`);
+                renderChatView(document.getElementById('view-container'));
+                showToast('تم تعديل الرسالة بنجاح', 'success');
+            }
+        }
+
+        function confirmDeleteChatMessage(msgId) {
+            showCustomConfirm("هل أنت متأكد من رغبتك في حذف رسالتك من المحادثة نهائياً؟", () => {
+                STATE.chatMessages = STATE.chatMessages.filter(m => m.id !== msgId);
+                saveStateToStorage();
+                logSystemActivity('حذف رسالة شات', STATE.activeUser.name, `حذف رسالة من الشات بنجاح.`);
+                renderChatView(document.getElementById('view-container'));
+                showToast('تم حذف الرسالة بنجاح لدى الجميع', 'info');
+            });
+        }
+
+        function togglePinMessage(msgId) {
+            const msg = STATE.chatMessages.find(m => m.id === msgId);
+            if (!msg) return;
+
+            msg.pinned = !msg.pinned;
+            saveStateToStorage();
+            logSystemActivity('تثبيت رسالة شات', STATE.activeUser.name, `${msg.pinned ? 'ثبت' : 'ألغى تثبيت'} رسالة إعلان للفريق.`);
+            renderChatView(document.getElementById('view-container'));
+            showToast(msg.pinned ? 'تم تثبيت الرسالة بنجاح' : 'تم إلغاء تثبيت الرسالة', 'success');
+        }
+
+        function confirmClearAllChat() {
+            showCustomConfirm("هل أنت متأكد من رغبتك في تصفير سجلات ومحادثات الشات العام بالكامل؟ (لا يمكن التراجع عن هذا الإجراء)", () => {
+                STATE.chatMessages = [];
+                saveStateToStorage();
+                logSystemActivity('تصفير الشات', STATE.activeUser.name, `قام بمسح سجل المحادثات وتصفيره بالكامل.`);
+                renderChatView(document.getElementById('view-container'));
+                showToast('تم مسح سجل الشات بالكامل ومزامنته للجميع', 'warning');
+            });
+        }
+
+        function toggleChatRestriction() {
+            STATE.chatRestricted = !STATE.chatRestricted;
+            saveStateToStorage();
+            logSystemActivity('تقييد الشات', STATE.activeUser.name, `${STATE.chatRestricted ? 'قيد وكتم' : 'أتاح وألغى كتم'} الكتابة في الشات العام للأعضاء.`);
+            renderChatView(document.getElementById('view-container'));
+            showToast(STATE.chatRestricted ? 'تم كتم الشات العام للأعضاء بنجاح' : 'تم إتاحة الشات العام للجميع', 'warning');
+        }
+
+        function scrollChatToBottom() {
+            setTimeout(() => {
+                const chatContainer = document.getElementById('chat-messages-container');
+                if (chatContainer) {
+                    chatContainer.scrollTop = chatContainer.scrollHeight;
+                }
+            }, 100);
+        }
+
+        // إدارة وتوزيع لوحة المهام الموحدة
+        function renderTasksView(container) {
+            const isStaff = STATE.activeUser.role === 'owner' || STATE.activeUser.role === 'admin';
+
+            container.innerHTML = `
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <p class="text-xs text-slate-400 leading-relaxed">توزيع التاسكات والمهام للمشروع بمؤشرات تحكم لمسية متوافقة بالكامل مع الهواتف والأجهزة اللوحية.</p>
+                    </div>
+                    
+                    ${isStaff ? `
+                        <button onclick="openModalTask()" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow transition-all flex items-center gap-1.5 active:scale-95 w-full sm:w-auto justify-center">
+                            <i class="fa-solid fa-plus text-sm"></i>
+                            <span>إضافة مهمة جديدة</span>
+                        </button>
+                    ` : ''}
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 font-cairo">
+                    <!-- Column: Todo -->
+                    <div class="bg-slate-200/50 dark:bg-slate-900/60 rounded-2xl p-4 border border-slate-200 dark:border-slate-800 flex flex-col min-h-[300px]">
+                        <h4 class="font-bold text-xs uppercase tracking-wider mb-4 flex items-center justify-between text-slate-500 dark:text-slate-400">
+                            <span>بانتظار العمل</span>
+                            <span class="bg-slate-300 dark:bg-slate-800 text-slate-700 dark:text-slate-300 px-2 py-0.5 rounded text-[10px] font-bold font-sans" id="count-todo">0</span>
+                        </h4>
+                        <div class="space-y-3 flex-1 overflow-y-auto" id="col-todo" ondragover="allowDrop(event)" ondrop="dropTask(event, 'todo')"></div>
+                    </div>
+
+                    <!-- Column: Doing -->
+                    <div class="bg-blue-50/40 dark:bg-slate-900/60 rounded-2xl p-4 border border-blue-100/50 dark:border-slate-800 flex flex-col min-h-[300px]">
+                        <h4 class="font-bold text-xs uppercase tracking-wider mb-4 flex items-center justify-between text-blue-500 dark:text-blue-400">
+                            <span>قيد التنفيذ حالياً</span>
+                            <span class="bg-blue-500/10 text-blue-500 px-2 py-0.5 rounded text-[10px] font-bold font-sans" id="count-doing">0</span>
+                        </h4>
+                        <div class="space-y-3 flex-1 overflow-y-auto" id="col-doing" ondragover="allowDrop(event)" ondrop="dropTask(event, 'doing')"></div>
+                    </div>
+
+                    <!-- Column: Done -->
+                    <div class="bg-green-50/40 dark:bg-slate-900/60 rounded-2xl p-4 border border-green-100/50 dark:border-slate-800 flex flex-col min-h-[300px]">
+                        <h4 class="font-bold text-xs uppercase tracking-wider mb-4 flex items-center justify-between text-green-500 dark:text-green-400">
+                            <span>تاسكات مكتملة</span>
+                            <span class="bg-green-500/10 text-green-500 px-2 py-0.5 rounded text-[10px] font-bold font-sans" id="count-done-badge">0</span>
+                        </h4>
+                        <div class="space-y-3 flex-1 overflow-y-auto" id="col-done" ondragover="allowDrop(event)" ondrop="dropTask(event, 'done')"></div>
+                    </div>
+                </div>
+            `;
+
+            renderTaskBoardItems();
+        }
+
+        function renderTaskBoardItems() {
+            const isStaff = STATE.activeUser.role === 'owner' || STATE.activeUser.role === 'admin';
+            
+            const columns = {
+                todo: document.getElementById('col-todo'),
+                doing: document.getElementById('col-doing'),
+                done: document.getElementById('col-done')
+            };
+
+            for (let c in columns) {
+                if (columns[c]) columns[c].innerHTML = '';
+            }
+
+            let counts = { todo: 0, doing: 0, done: 0 };
+            const visibleTasks = STATE.tasks;
+
+            visibleTasks.forEach(task => {
+                const card = document.createElement('div');
+                card.id = `task-card-${task.id}`;
+                card.draggable = true;
+                card.ondragstart = (e) => dragTask(e, task.id);
+                card.className = "bg-white dark:bg-slate-950 p-4 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm cursor-grab active:cursor-grabbing hover:border-slate-300 dark:hover:border-slate-700 transition-all text-xs";
+                
+                const priorityColors = {
+                    'عالية': 'bg-rose-500/10 text-rose-500 border border-rose-500/20',
+                    'متوسطة': 'bg-amber-500/10 text-amber-500 border border-amber-500/20',
+                    'منخفضة': 'bg-slate-500/10 text-slate-400 border border-slate-500/20'
+                };
+
+                const assignee = STATE.users.find(u => u.id === task.assignedTo);
+                let assigneeName = 'مجهول';
+                if (assignee) {
+                    assigneeName = assignee.name; 
+                }
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${priorityColors[task.priority] || ''}">${task.priority}</span>
+                        <span class="text-[9px] text-slate-400 font-sans">تاريخ: ${task.deadline}</span>
+                    </div>
+                    <h5 class="font-bold text-slate-850 dark:text-slate-100 mb-1.5 leading-relaxed">${task.title}</h5>
+                    <p class="text-slate-500 dark:text-slate-400 leading-relaxed mb-3">${task.desc}</p>
+                    
+                    <div class="pt-2.5 border-t border-slate-100 dark:border-slate-900 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                        <div class="flex items-center gap-1 text-slate-400 text-[10px]">
+                            <i class="fa-regular fa-circle-user text-xs"></i>
+                            <span>المسؤول: <strong class="text-slate-600 dark:text-slate-300">${assigneeName}</strong></span>
+                        </div>
+                        
+                        <div class="flex items-center justify-end gap-1">
+                            ${task.status !== 'todo' ? `<button onclick="moveTaskState('${task.id}', 'prev')" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs active:scale-90" title="نقل للخلف"><i class="fa-solid fa-angle-right"></i></button>` : ''}
+                            ${task.status !== 'done' ? `<button onclick="moveTaskState('${task.id}', 'next')" class="p-2 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-xs active:scale-90" title="نقل للأمام"><i class="fa-solid fa-angle-left"></i></button>` : ''}
+                            ${isStaff ? `<button onclick="confirmDeleteTask('${task.id}')" class="p-2 rounded-lg bg-rose-500/10 hover:bg-rose-500/20 text-rose-500" title="حذف المهمة"><i class="fa-regular fa-trash-can"></i></button>` : ''}
+                        </div>
+                    </div>
+                `;
+
+                if (columns[task.status]) {
+                    columns[task.status].appendChild(card);
+                    counts[task.status]++;
+                }
+            });
+
+            if (document.getElementById('count-todo')) document.getElementById('count-todo').innerText = counts.todo;
+            if (document.getElementById('count-doing')) document.getElementById('count-doing').innerText = counts.doing;
+            if (document.getElementById('count-done-badge')) document.getElementById('count-done-badge').innerText = counts.done;
+        }
+
+        function allowDrop(ev) {
+            ev.preventDefault();
+        }
+
+        let draggedTaskId = null;
+        function dragTask(ev, taskId) {
+            draggedTaskId = taskId;
+        }
+
+        function dropTask(ev, newStatus) {
+            ev.preventDefault();
+            if (draggedTaskId) {
+                const task = STATE.tasks.find(t => t.id === draggedTaskId);
+                if (task) {
+                    task.status = newStatus;
+                    saveStateToStorage();
+                    logSystemActivity('تغيير حالة مهمة', STATE.activeUser.name, `تم نقل مهمة "${task.title}" إلى عمود "${newStatus}".`);
+                    renderTaskBoardItems();
+                    showToast('تم تحديث موضع المهمة بنجاح', 'success');
+                }
+                draggedTaskId = null;
+            }
+        }
+
+        function moveTaskState(taskId, direction) {
+            const task = STATE.tasks.find(t => t.id === taskId);
+            if (!task) return;
+
+            const statesOrder = ['todo', 'doing', 'done'];
+            let currentIndex = statesOrder.indexOf(task.status);
+            
+            if (direction === 'next' && currentIndex < 2) {
+                task.status = statesOrder[currentIndex + 1];
+            } else if (direction === 'prev' && currentIndex > 0) {
+                task.status = statesOrder[currentIndex - 1];
+            }
+
+            saveStateToStorage();
+            logSystemActivity('تغيير حالة مهمة', STATE.activeUser.name, `تم نقل حالة مهمة "${task.title}" إلى "${task.status}".`);
+            renderTaskBoardItems();
+            showToast('تم تحديث حالة المهمة بنجاح', 'success');
+        }
+
+        function openModalTask() {
+            const select = document.getElementById('task-assignee-input');
+            select.innerHTML = '';
+            
+            const approvedUsers = STATE.users.filter(u => u.status === 'approved');
+            approvedUsers.forEach(u => {
+                const opt = document.createElement('option');
+                opt.value = u.id;
+                opt.innerText = u.name;
+                select.appendChild(opt);
+            });
+
+            document.getElementById('modal-task').classList.remove('hidden');
+        }
+
+        function createNewTask() {
+            const title = document.getElementById('task-title-input').value.trim();
+            const desc = document.getElementById('task-desc-input').value.trim();
+            const deadline = document.getElementById('task-deadline-input').value;
+            const priority = document.getElementById('task-priority-input').value;
+            const assignee = document.getElementById('task-assignee-input').value;
+
+            if (!title || !deadline) {
+                showToast('يرجى كتابة عنوان وتحديد موعد التسليم للحفظ', 'warning');
+                return;
+            }
+
+            const newTask = {
+                id: 'tsk-' + Date.now(),
+                title: title,
+                desc: desc,
+                assignedTo: assignee,
+                priority: priority,
+                status: 'todo',
+                deadline: deadline
+            };
+
+            STATE.tasks.push(newTask);
+            saveStateToStorage();
+            
+            const targetUser = STATE.users.find(u => u.id === assignee);
+            logSystemActivity('إنشاء مهمة جديدة وإسنادها', STATE.activeUser.name, `تم تعيين وإسناد مهمة "${title}" للمطور "${targetUser ? targetUser.name : 'مجهول'}"`);
+            
+            closeModal('modal-task');
+            renderTasksView(document.getElementById('view-container'));
+            showToast('تم إضافة المهمة وإسنادها بنجاح 📌', 'success');
+        }
+
+        function confirmDeleteTask(taskId) {
+            showCustomConfirm("هل أنت متأكد من مسح وحذف هذه المهمة نهائياً من اللوحة؟", () => {
+                STATE.tasks = STATE.tasks.filter(t => t.id !== taskId);
+                saveStateToStorage();
+                logSystemActivity('حذف مهمة', STATE.activeUser.name, `تم إزالة وحذف مهمة نهائياً من اللوحة.`);
+                renderTaskBoardItems();
+                showToast('تم حذف المهمة وإلغاء أرشفتها', 'info');
+            });
+        }
+
+        // مستودع الملفات والمستندات المشتركة
+        function renderFilesView(container) {
+            container.innerHTML = `
+                <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <p class="text-xs text-slate-400">مستودع مركزي آمن لكافة مستندات وملفات فريق 5 Hub Team</p>
+                    </div>
+                    
+                    <button onclick="document.getElementById('modal-file').classList.remove('hidden')" class="bg-brand-600 hover:bg-brand-700 text-white px-4 py-2.5 rounded-xl text-xs font-bold shadow transition-all flex items-center gap-1.5 active:scale-95 w-full sm:w-auto justify-center">
+                        <i class="fa-solid fa-cloud-arrow-up text-sm"></i>
+                        <span>رفع ملف للمعاينة والتشارك</span>
+                    </button>
+                </div>
+
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-right border-collapse text-xs min-w-[600px]">
+                            <thead>
+                                <tr class="bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-400">
+                                    <th class="p-4">اسم الملف والأرشيف</th>
+                                    <th class="p-4">النوع</th>
+                                    <th class="p-4">الحجم</th>
+                                    <th class="p-4">تم الرفع بواسطة</th>
+                                    <th class="p-4">تاريخ الرفع</th>
+                                    <th class="p-4 text-left">التحكم</th>
+                                </tr>
+                            </thead>
+                            <tbody id="files-list-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+
+            renderFilesList();
+        }
+
+        function renderFilesList() {
+            const body = document.getElementById('files-list-body');
+            if (!body) return;
+
+            const isStaff = STATE.activeUser.role === 'owner' || STATE.activeUser.role === 'admin';
+
+            if (STATE.files.length === 0) {
+                body.innerHTML = `
+                    <tr>
+                        <td colspan="6" class="text-center py-12 text-slate-400 font-cairo">لا توجد ملفات مرفوعة حالياً في المستودع.</td>
+                    </tr>
+                `;
+                return;
+            }
+
+            body.innerHTML = STATE.files.map(file => {
+                const uploader = STATE.users.find(u => u.id === file.uploadedBy);
+                
+                let uploaderDisplayName = 'مجهول';
+                if (uploader) {
+                    if (isStaff) {
+                        uploaderDisplayName = uploader.name;
+                    } else {
+                        uploaderDisplayName = (uploader.role === 'owner' || uploader.role === 'admin') ? 'الإدارة 👑' : uploader.name;
+                    }
+                }
+
+                const canDelete = isStaff || (file.uploadedBy === STATE.activeUser.id);
+
+                return `
+                    <tr class="border-b border-slate-100 dark:border-slate-800/60 hover:bg-slate-50/50 dark:hover:bg-slate-950/40">
+                        <td class="p-4 font-bold flex items-center gap-2 text-slate-800 dark:text-white">
+                            <i class="fa-solid fa-file-invoice text-rose-500 text-sm"></i>
+                            <span class="truncate max-w-[150px] sm:max-w-none">${file.name}</span>
+                        </td>
+                        <td class="p-4 text-slate-400 font-sans">${file.type}</td>
+                        <td class="p-4 text-slate-400 font-sans">${file.size}</td>
+                        <td class="p-4 text-slate-500 dark:text-slate-400">${uploaderDisplayName}</td>
+                        <td class="p-4 text-slate-400 font-sans">${file.timestamp}</td>
+                        <td class="p-4 text-left">
+                            <div class="flex items-center justify-end gap-1">
+                                <a href="#" onclick="event.preventDefault(); showToast('محاكاة: جاري تحميل المستند التشارك... 💾', 'info')" class="p-2 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-lg text-slate-600 dark:text-slate-300" title="تحميل الملف">
+                                    <i class="fa-solid fa-download"></i>
+                                </a>
+                                ${canDelete ? `
+                                    <button onclick="confirmDeleteUploadedFile('${file.id}')" class="p-2 bg-rose-500/10 hover:bg-rose-500/20 text-rose-500 rounded-lg" title="حذف الملف">
+                                        <i class="fa-regular fa-trash-can"></i>
+                                    </button>
+                                ` : ''}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function uploadMockFile() {
+            const name = document.getElementById('file-name-input').value.trim();
+            const size = document.getElementById('file-size-input').value;
+            const type = document.getElementById('file-type-input').value;
+
+            if (!name) {
+                showToast('الرجاء كتابة اسم الملف لتأكيد الرفع', 'warning');
+                return;
+            }
+
+            const newFile = {
+                id: 'fil-' + Date.now(),
+                name: name + '.' + type.toLowerCase(),
+                size: size,
+                type: type,
+                uploadedBy: STATE.activeUser.id,
+                timestamp: new Date().toISOString().split('T')[0]
+            };
+
+            STATE.files.push(newFile);
+            saveStateToStorage();
+            logSystemActivity('رفع ملف مستودع', STATE.activeUser.name, `قام برفع ملف جديد للأرشيف: "${newFile.name}" بنجاح.`);
+            
+            closeModal('modal-file');
+            renderFilesView(document.getElementById('view-container'));
+            showToast('تم رفع وحفظ الملف بنجاح 💾', 'success');
+        }
+
+        function confirmDeleteUploadedFile(fileId) {
+            showCustomConfirm("هل أنت متأكد من مسح وحذف هذا الملف نهائياً من المستودع التشاركي؟", () => {
+                STATE.files = STATE.files.filter(f => f.id !== fileId);
+                saveStateToStorage();
+                logSystemActivity('حذف ملف مستودع', STATE.activeUser.name, `مسح ملف من مستودع الأرشيف التشاركي.`);
+                renderFilesList();
+                showToast('تم إزالة الملف بنجاح', 'info');
+            });
+        }
+
+        // إدارة وتعديل المستخدمين (للملاك والمشرفين فقط)
+        function renderAdminUsersView(container) {
+            container.innerHTML = `
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <p class="text-xs text-slate-400">تحكم بطلب الأعضاء، الرتب، وكلمات المرور الخاصة بالدخول</p>
+                    <button onclick="openCreateUserModal()" class="bg-brand-600 hover:bg-brand-700 text-white text-xs px-4 py-2.5 rounded-xl font-bold shadow flex items-center gap-1.5 transition-all active:scale-95 w-full sm:w-auto justify-center">
+                        <i class="fa-solid fa-user-plus text-sm"></i>
+                        <span>إنشاء مستخدم جديد يدوياً</span>
+                    </button>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm lg:col-span-1 flex flex-col">
+                        <h4 class="font-bold text-sm mb-4 flex items-center gap-1.5 text-amber-500">
+                            <i class="fa-solid fa-user-clock animate-pulse"></i>
+                            <span>طلبات الانضمام المعلقة ⏳</span>
+                        </h4>
+                        <div class="space-y-3 max-h-[350px] overflow-y-auto flex-1" id="pending-approvals-list"></div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm lg:col-span-2">
+                        <h4 class="font-bold text-sm mb-4 flex items-center gap-1.5 text-blue-500">
+                            <i class="fa-solid fa-users"></i>
+                            <span>الأعضاء المفعلين (وقاعدة اليوزرات والـ Passwords)</span>
+                        </h4>
+                        <div class="space-y-3 overflow-y-auto max-h-[450px]" id="active-members-list"></div>
+                    </div>
+                </div>
+            `;
+
+            renderUsersSubLists();
+        }
+
+        function openCreateUserModal() {
+            document.getElementById('new-user-fullname').value = '';
+            document.getElementById('new-user-username').value = '';
+            document.getElementById('new-user-email').value = '';
+            document.getElementById('new-user-password').value = '';
+            checkPasswordStrength('');
+            document.getElementById('modal-create-user').classList.remove('hidden');
+        }
+
+        function checkPasswordStrength(password) {
+            const bar = document.getElementById('pwd-strength-bar');
+            const text = document.getElementById('pwd-strength-txt');
+            if (!bar || !text) return;
+
+            if (password.length === 0) {
+                bar.className = "w-0 h-1.5 transition-all duration-300 bg-slate-300";
+                text.innerText = "فارغ";
+                text.className = "text-[10px] font-bold text-slate-500";
+                return;
+            }
+
+            let score = 0;
+            if (password.length >= 6) score++;
+            if (password.length >= 10) score++;
+            if (/[A-Z]/.test(password)) score++;
+            if (/[0-9]/.test(password)) score++;
+            if (/[^A-Za-z0-9]/.test(password)) score++;
+
+            if (score <= 1) {
+                bar.className = "w-1/3 h-1.5 transition-all duration-300 bg-rose-500";
+                text.innerText = "ضعيفة جداً ❌";
+                text.className = "text-[10px] font-bold text-rose-500";
+            } else if (score <= 3) {
+                bar.className = "w-2/3 h-1.5 transition-all duration-300 bg-amber-500";
+                text.innerText = "متوسطة القبول ⚠️";
+                text.className = "text-[10px] font-bold text-amber-500";
+            } else {
+                bar.className = "w-full h-1.5 transition-all duration-300 bg-emerald-500";
+                text.innerText = "قوية وآمنة وممتازة ✅";
+                text.className = "text-[10px] font-bold text-emerald-500";
+            }
+        }
+
+        function createNewCustomUser() {
+            const fullname = document.getElementById('new-user-fullname').value.trim();
+            const username = document.getElementById('new-user-username').value.trim().toLowerCase();
+            const email = document.getElementById('new-user-email').value.trim();
+            const password = document.getElementById('new-user-password').value;
+            const role = document.getElementById('new-user-role').value;
+            const status = document.getElementById('new-user-status').value;
+
+            if (!fullname || !username || !email || !password) {
+                showToast('يرجى تعبئة كافة الحقول المطلوبة لإنشاء اليوزر!', 'warning');
+                return;
+            }
+
+            const isDuplicate = STATE.users.some(u => u.username === username);
+            if (isDuplicate) {
+                showToast('اسم المستخدم هذا محجوز مسبقاً، اختر اسماً آخر!', 'error');
+                return;
+            }
+
+            const newUser = {
+                id: 'usr-' + Date.now(),
+                name: fullname,
+                username: username,
+                email: email,
+                role: role,
+                status: status,
+                password: password,
+                avatar: `https://placehold.co/100x100/2563eb/ffffff?text=${fullname[0].toUpperCase()}`,
+                online: false,
+                currentActivity: 'حساب جديد غير متصل'
+            };
+
+            STATE.users.push(newUser);
+            saveStateToStorage();
+
+            logSystemActivity('إنشاء مستخدم يدوياً', STATE.activeUser.name, `تم بناء حساب جديد: ${fullname} (يوزر: ${username} | باسورد: ${password}) برتبة ${role.toUpperCase()}`);
+            
+            closeModal('modal-create-user');
+            renderAdminUsersView(document.getElementById('view-container'));
+            showToast(`تم إنشاء يوزر الحساب بنجاح!`, 'success');
+        }
+
+        function renderUsersSubLists() {
+            const isOwner = STATE.activeUser.role === 'owner';
+            const isStaff = STATE.activeUser.role === 'owner' || STATE.activeUser.role === 'admin';
+            
+            const pendingList = document.getElementById('pending-approvals-list');
+            const pendingUsers = STATE.users.filter(u => u.status === 'pending');
+
+            if (pendingList) {
+                if (pendingUsers.length === 0) {
+                    pendingList.innerHTML = `<div class="text-center py-8 text-xs text-slate-400 font-cairo">لا توجد طلبات انضمام معلقة حالياً.</div>`;
+                } else {
+                    pendingList.innerHTML = pendingUsers.map(u => `
+                        <div class="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 space-y-2 text-xs">
+                            <div class="flex items-center gap-2.5">
+                                <img src="${u.avatar}" class="w-8 h-8 rounded-full border border-slate-200 dark:border-slate-800" alt="Avatar">
+                                <div>
+                                    <span class="font-bold block text-slate-800 dark:text-white">${u.name}</span>
+                                    <span class="text-[10px] text-slate-400 block">${u.email}</span>
+                                    <span class="text-[9px] text-brand-500 font-semibold block font-mono">يوزر: ${u.username}</span>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-1 pt-1.5 border-t border-slate-100 dark:border-slate-800">
+                                <button onclick="approveUserStatus('${u.id}')" class="flex-1 bg-green-600 hover:bg-green-700 text-white py-1.5 rounded-lg font-bold transition-all text-[11px] active:scale-95">موافق وتفعيل</button>
+                                <button onclick="confirmRejectAndBlockUser('${u.id}')" class="flex-1 bg-rose-600/10 hover:bg-rose-600 text-rose-500 hover:text-white py-1.5 rounded-lg font-bold transition-all text-[11px] active:scale-95">رفض</button>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            }
+
+            const activeList = document.getElementById('active-members-list');
+            const activeUsers = STATE.users.filter(u => u.status === 'approved');
+
+            if (activeList) {
+                activeList.innerHTML = activeUsers.map(u => {
+                    const isTargetOwner = u.role === 'owner';
+                    const isTargetAdmin = u.role === 'admin';
+                    
+                    let actions = '';
+                    let passChangeBtn = '';
+
+                    if (isStaff && !isTargetOwner) {
+                        passChangeBtn = `
+                            <button onclick="openChangePasswordModal('${u.id}')" class="px-2.5 py-1.5 rounded-lg bg-amber-500/10 hover:bg-amber-500 hover:text-white text-amber-500 text-[10px] font-bold flex items-center gap-1 transition-all active:scale-95" title="تعديل كلمة مرور العضو">
+                                <i class="fa-solid fa-key text-[9px]"></i> تعديل الباسورد
+                            </button>
+                        `;
+                    }
+                    
+                    if (isOwner && !isTargetOwner) {
+                        actions = `
+                            <div class="flex items-center gap-1.5 flex-wrap justify-end">
+                                ${passChangeBtn}
+                                <button onclick="toggleUserRole('${u.id}')" class="px-2.5 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200 dark:bg-slate-800 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 font-semibold text-[10px] active:scale-95" title="تغيير الرتبة">
+                                    تغيير لـ ${isTargetAdmin ? 'عضو' : 'مشرف'}
+                                </button>
+                                <button onclick="freezeUserStatus('${u.id}')" class="px-2 py-1.5 rounded-lg bg-slate-500/10 hover:bg-slate-500 text-slate-500 hover:text-white active:scale-95" title="تجميد مؤقت">
+                                    <i class="fa-solid fa-lock text-[10px]"></i>
+                                </button>
+                                <button onclick="confirmDeleteUserPermanently('${u.id}')" class="px-2 py-1.5 rounded-lg bg-rose-500/10 hover:bg-rose-500 text-rose-500 hover:text-white active:scale-95" title="طرد نهائي">
+                                    <i class="fa-regular fa-trash-can text-[10px]"></i>
+                                </button>
+                            </div>
+                        `;
+                    } else if (!isOwner && isTargetAdmin && !isTargetOwner) {
+                        actions = `
+                            <div class="flex items-center gap-1.5">
+                                ${passChangeBtn}
+                                <span class="text-[10px] text-slate-400">مشرف النظام</span>
+                            </div>
+                        `;
+                    } else if (isTargetOwner) {
+                        actions = `<span class="text-[10px] text-amber-500 font-bold"><i class="fa-solid fa-crown"></i> المالك الرئيسي</span>`;
+                    } else {
+                        actions = `
+                            <div class="flex items-center gap-1.5">
+                                ${passChangeBtn}
+                                <span class="text-[10px] text-slate-400">عضو نشط</span>
+                            </div>
+                        `;
+                    }
+
+                    return `
+                        <div class="p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-800 flex items-center justify-between gap-3 flex-wrap md:flex-nowrap text-xs">
+                            <div class="flex items-center gap-3">
+                                <img src="${u.avatar}" class="w-10 h-10 rounded-full border border-slate-200 dark:border-slate-800 object-cover" alt="Avatar">
+                                <div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="font-bold text-slate-850 dark:text-slate-100 block">${u.name}</span>
+                                        <span class="text-[9px] font-bold px-1.5 py-0.2 bg-slate-200 dark:bg-slate-800 text-slate-450 rounded-full font-mono uppercase">${u.role}</span>
+                                    </div>
+                                    <span class="text-[10px] text-slate-400 block">${u.email}</span>
+                                    <div class="flex items-center gap-2 text-[10px] text-brand-500 mt-1 font-mono">
+                                        <span>يوزر: <strong>${u.username}</strong></span>
+                                        <span>•</span>
+                                        <span>باسورد: <strong class="text-emerald-500 font-sans">${u.password}</strong></span>
+                                    </div>
+                                </div>
+                            </div>
+                            ${actions}
+                        </div>
+                    `;
+                }).join('');
+            }
+        }
+
+        function openChangePasswordModal(userId) {
+            const user = STATE.users.find(u => u.id === userId);
+            if (!user) return;
+
+            targetPasswordUserId = userId;
+            document.getElementById('change-password-target-name').innerText = user.name;
+            document.getElementById('change-pwd-input').value = '';
+            document.getElementById('modal-change-password').classList.remove('hidden');
+        }
+
+        let targetPasswordUserId = null;
+        function submitChangedPassword() {
+            const newPwd = document.getElementById('change-pwd-input').value.trim();
+            if (!newPwd) {
+                showToast('يرجى كتابة كلمة المرور الجديدة أولاً للحفظ', 'warning');
+                return;
+            }
+
+            const user = STATE.users.find(u => u.id === targetPasswordUserId);
+            if (user) {
+                user.password = newPwd;
+                saveStateToStorage();
+                logSystemActivity('تغيير كلمة مرور عضو', STATE.activeUser.name, `تم تغيير كلمة مرور العضو "${user.name}" يدويًا وصارت: "${newPwd}".`, 'security');
+                closeModal('modal-change-password');
+                renderAdminUsersView(document.getElementById('view-container'));
+                showToast(`تم تحديث كلمة مرور ${user.name} بنجاح ✅`, 'success');
+            }
+        }
+
+        function approveUserStatus(userId) {
+            const user = STATE.users.find(u => u.id === userId);
+            if (user) {
+                user.status = 'approved';
+                saveStateToStorage();
+                logSystemActivity('تفعيل حساب مستخدم', STATE.activeUser.name, `تم الموافقة وتفعيل يوزر الحساب لـ "${user.name}".`);
+                renderAdminUsersView(document.getElementById('view-container'));
+                showToast(`تم تفعيل حساب ${user.name} بنجاح ✅`, 'success');
+            }
+        }
+
+        function confirmRejectAndBlockUser(userId) {
+            showCustomConfirm("هل أنت متأكد من رفض وإلغاء طلب انضمام هذا المستخدم نهائياً؟", () => {
+                STATE.users = STATE.users.filter(u => u.id !== userId);
+                saveStateToStorage();
+                logSystemActivity('رفض انضمام مستخدم', STATE.activeUser.name, `تم رفض وحظر طلب تفعيل حساب معلق.`);
+                renderAdminUsersView(document.getElementById('view-container'));
+                showToast('تم رفض الحساب بنجاح', 'info');
+            });
+        }
+
+        function toggleUserRole(userId) {
+            const user = STATE.users.find(u => u.id === userId);
+            if (user) {
+                user.role = user.role === 'admin' ? 'member' : 'admin';
+                saveStateToStorage();
+                logSystemActivity('تغيير رتبة مستخدم', STATE.activeUser.name, `تم تعديل رتبة الحساب لـ "${user.name}" لتصبح: "${user.role.toUpperCase()}".`);
+                renderAdminUsersView(document.getElementById('view-container'));
+                showToast(`تم تغيير الرتبة لـ ${user.role.toUpperCase()}`, 'success');
+            }
+        }
+
+        function freezeUserStatus(userId) {
+            const user = STATE.users.find(u => u.id === userId);
+            if (user) {
+                user.status = 'pending';
+                saveStateToStorage();
+                logSystemActivity('تجميد حساب عضو', STATE.activeUser.name, `تم تجميد حساب "${user.name}" وإعادته لقائمة الانتظار الأمنية.`);
+                renderAdminUsersView(document.getElementById('view-container'));
+                showToast(`تم تجميد حساب لـ ${user.name} بنجاح 🔒`, 'info');
+            }
+        }
+
+        function confirmDeleteUserPermanently(userId) {
+            showCustomConfirm("هل أنت متأكد من طرد وحذف هذا المستخدم نهائياً من قاعدة بيانات المنصة؟", () => {
+                STATE.users = STATE.users.filter(u => u.id !== userId);
+                saveStateToStorage();
+                logSystemActivity('طرد مستخدم نهائياً', STATE.activeUser.name, `طرد وحذف حساب نشط نهائياً من قاعدة بيانات المنصة.`);
+                renderAdminUsersView(document.getElementById('view-container'));
+                showToast('تم حذف وطرد العضو بنجاح', 'warning');
+            });
+        }
+
+        // إحصائيات الأداء المتقدمة
+        function renderStatsView(container) {
+            const totalTasks = STATE.tasks.length;
+            const completedTasks = STATE.tasks.filter(t => t.status === 'done').length;
+            const progressPercent = totalTasks > 0 ? Math.round((completedTasks / totalTasks) * 100) : 0;
+
+            container.innerHTML = `
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-between">
+                        <h4 class="font-bold text-xs text-slate-400 mb-4 uppercase">معدل إنجاز المهام المسندة</h4>
+                        <div class="flex flex-col items-center justify-center py-6">
+                            <div class="relative w-36 h-36">
+                                <svg class="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
+                                    <circle cx="50" cy="50" r="40" stroke="#e2e8f0" stroke-width="8" fill="transparent" class="dark:stroke-slate-800" />
+                                    <circle cx="50" cy="50" r="40" stroke="#0284c7" stroke-width="8" fill="transparent" stroke-dasharray="251.2" stroke-dashoffset="${251.2 - (251.2 * progressPercent) / 100}" class="transition-all duration-1000 ease-out" />
+                                </svg>
+                                <div class="absolute inset-0 flex flex-col items-center justify-center">
+                                    <span class="text-3xl font-extrabold text-slate-800 dark:text-white font-sans">${progressPercent}%</span>
+                                    <span class="text-[9px] text-slate-400">إنجاز كلي</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="text-[11px] text-center text-slate-400 mt-2 leading-relaxed">
+                            بانتظار البدء: <strong class="text-slate-800 dark:text-white">${STATE.tasks.filter(t => t.status === 'todo').length}</strong> | 
+                            قيد العمل: <strong class="text-slate-800 dark:text-white">${STATE.tasks.filter(t => t.status === 'doing').length}</strong>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm lg:col-span-2">
+                        <h4 class="font-bold text-xs text-slate-400 mb-6 uppercase font-cairo">معدل نشاط الشات الأسبوعي (الرسائل)</h4>
+                        <div class="flex items-end justify-between h-40 pt-4 gap-3">
+                            <div class="flex-1 flex flex-col items-center gap-2">
+                                <div class="w-full bg-slate-100 dark:bg-slate-850 rounded-t h-2/3 relative group">
+                                    <div class="absolute bottom-0 left-0 right-0 bg-brand-500 rounded-t h-3/4"></div>
+                                </div>
+                                <span class="text-[10px] text-slate-400">الأحد</span>
+                            </div>
+                            <div class="flex-1 flex flex-col items-center gap-2">
+                                <div class="w-full bg-slate-100 dark:bg-slate-850 rounded-t h-full relative group">
+                                    <div class="absolute bottom-0 left-0 right-0 bg-brand-500 rounded-t h-1/2"></div>
+                                </div>
+                                <span class="text-[10px] text-slate-400">الاثنين</span>
+                            </div>
+                            <div class="flex-1 flex flex-col items-center gap-2">
+                                <div class="w-full bg-slate-100 dark:bg-slate-850 rounded-t h-full relative group">
+                                    <div class="absolute bottom-0 left-0 right-0 bg-brand-500 rounded-t h-[90%]"></div>
+                                </div>
+                                <span class="text-[10px] text-slate-400">الثلاثاء</span>
+                            </div>
+                            <div class="flex-1 flex flex-col items-center gap-2">
+                                <div class="w-full bg-slate-100 dark:bg-slate-850 rounded-t h-full relative group">
+                                    <div class="absolute bottom-0 left-0 right-0 bg-brand-500 rounded-t h-[40%]"></div>
+                                </div>
+                                <span class="text-[10px] text-slate-400">الأربعاء</span>
+                            </div>
+                            <div class="flex-1 flex flex-col items-center gap-2">
+                                <div class="w-full bg-slate-100 dark:bg-slate-850 rounded-t h-full relative group">
+                                    <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-emerald-600 to-teal-400 rounded-t h-[80%] animate-pulse"></div>
+                                </div>
+                                <span class="text-[10px] text-emerald-450 font-bold">اليوم</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // سجل العمليات الأمني الموثق
+        function renderAuditsView(container) {
+            container.innerHTML = `
+                <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
+                    <div class="p-4 border-b border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
+                        <h4 class="font-bold text-xs text-slate-400 uppercase font-cairo">سجل المراقبة الأمني للعمليات الإدارية</h4>
+                        <span class="text-[10px] bg-blue-500/10 text-blue-500 px-2.5 py-0.5 rounded-full font-bold font-sans">SHA-256 Ledger Secured</span>
+                    </div>
+                    <div class="overflow-x-auto font-sans">
+                        <table class="w-full text-right border-collapse text-xs min-w-[700px]">
+                            <thead>
+                                <tr class="bg-slate-100 dark:bg-slate-950 text-slate-400 border-b border-slate-200 dark:border-slate-800">
+                                    <th class="p-4">العملية الإدارية</th>
+                                    <th class="p-4">المسؤول عن الحدث</th>
+                                    <th class="p-4">التفاصيل الفنية</th>
+                                    <th class="p-4">التوقيت</th>
+                                    <th class="p-4">نوع الحدث</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${STATE.auditLogs.map(log => {
+                                    const typeColors = {
+                                        security: 'bg-rose-500/10 text-rose-500 border border-rose-500/20',
+                                        task: 'bg-blue-500/10 text-blue-500 border border-blue-500/20',
+                                        file: 'bg-emerald-500/10 text-emerald-500 border border-emerald-500/20',
+                                        system: 'bg-purple-500/10 text-purple-500 border border-purple-500/20'
+                                    };
+                                    return `
+                                        <tr class="border-b border-slate-100 dark:border-slate-800 hover:bg-slate-50 dark:hover:bg-slate-950/30">
+                                            <td class="p-4 font-bold text-slate-800 dark:text-slate-100 font-cairo">${log.action}</td>
+                                            <td class="p-4 text-slate-500 dark:text-slate-300 font-semibold font-cairo">${log.user}</td>
+                                            <td class="p-4 text-slate-400">${log.details}</td>
+                                            <td class="p-4 text-slate-400">${log.timestamp}</td>
+                                            <td class="p-4"><span class="px-2.5 py-0.5 rounded text-[9px] font-bold ${typeColors[log.type] || ''}">${log.type.toUpperCase()}</span></td>
+                                        </tr>
+                                    `;
+                                }).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            `;
+        }
+
+        function logSystemActivity(action, user, details, type = 'system') {
+            const newLog = {
+                id: 'log-' + Date.now(),
+                action: action,
+                user: user,
+                details: details,
+                timestamp: 'اليوم، ' + new Date().toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'}),
+                type: type
+            };
+            STATE.auditLogs.unshift(newLog);
+            saveStateToStorage();
+        }
+
+        // إعدادات لوحة التحكم العامة وصيانة الخادم
+        function renderSettingsView(container) {
+            container.innerHTML = `
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                        <h4 class="font-bold text-sm mb-4 flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-3">
+                            <i class="fa-solid fa-sliders text-brand-500"></i>
+                            <span>تخصيص النظام والمشرفين</span>
+                        </h4>
+                        
+                        <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-850 gap-4">
+                            <div>
+                                <span class="font-bold text-xs block mb-0.5">تفعيل وضع الصيانة العام للمنصة</span>
+                                <span class="text-[10px] text-slate-400 font-cairo leading-relaxed">سيغلق المنصة عن الأعضاء والمشرفين ويقتصر الولوج على أحمد رامي فقط</span>
+                            </div>
+                            <button onclick="toggleMaintenanceMode()" class="w-10 h-6 bg-slate-700 rounded-full p-1 transition-colors duration-300 relative focus:outline-none shrink-0" id="maintenance-toggle-btn">
+                                <div class="w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${STATE.maintenanceMode ? 'translate-x-0 bg-red-500' : 'translate-x-4 bg-slate-400'}"></div>
+                            </button>
+                        </div>
+
+                        <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-950 rounded-xl border border-slate-200 dark:border-slate-850 gap-4">
+                            <div>
+                                <span class="font-bold text-xs block mb-0.5">السماح للمشرفين بقبول انضمام الأعضاء الجدد</span>
+                                <span class="text-[10px] text-slate-400 font-cairo leading-relaxed">صلاحية قبول اليوزرات من قائمة المعلقين</span>
+                            </div>
+                            <button onclick="toggleAdminApprovalAuthority()" class="w-10 h-6 bg-slate-700 rounded-full p-1 transition-colors duration-300 relative focus:outline-none shrink-0">
+                                <div class="w-4 h-4 bg-white rounded-full shadow transform transition-transform duration-300 ${STATE.adminsCanApprove ? 'translate-x-0 bg-brand-500' : 'translate-x-4 bg-slate-400'}"></div>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
+                        <h4 class="font-bold text-sm mb-4 flex items-center gap-1.5 border-b border-slate-100 dark:border-slate-800 pb-3 text-emerald-500">
+                            <i class="fa-solid fa-database"></i>
+                            <span>النسخ الاحتياطي وحفظ البيانات في المتصفح</span>
+                        </h4>
+                        <p class="text-xs text-slate-400 leading-relaxed font-cairo">
+                            تضمن المنصة تشفير وحفظ يوزرات وكلمات المرور الخاصة بفريقك محلياً لمنع فقدان البيانات. يمكنك أيضاً إعادة ضبط وتهيئة النظام مجدداً.
+                        </p>
+                        <div class="flex gap-2 pt-2 flex-wrap sm:flex-nowrap">
+                            <button onclick="simulateBackup()" class="flex-1 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold py-3 px-4 rounded-xl shadow-md transition-all active:scale-95">
+                                <i class="fa-solid fa-cloud-arrow-down ml-1 text-sm"></i> حفظ نسخة احتياطية
+                            </button>
+                            <button onclick="confirmResetToDefaults()" class="flex-1 bg-rose-600 hover:bg-rose-700 text-white text-xs font-bold py-3 px-4 rounded-xl transition-all active:scale-95">
+                                <i class="fa-solid fa-clock-rotate-left ml-1 text-sm"></i> تصفير وإعادة تعيين كلي
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function toggleMaintenanceMode() {
+            STATE.maintenanceMode = !STATE.maintenanceMode;
+            saveStateToStorage();
+            logSystemActivity('تغيير وضع صيانة المنصة', STATE.activeUser.name, `تم ${STATE.maintenanceMode ? 'تفعيل' : 'إلغاء'} وضع صيانة المنصة بنجاح.`, 'security');
+            checkMaintenanceStatus();
+            renderSettingsView(document.getElementById('view-container'));
+            showToast(STATE.maintenanceMode ? 'تم تفعيل وضع الصيانة بنجاح' : 'تم إتاحة الموقع للجميع بنجاح', 'warning');
+        }
+
+        function toggleAdminApprovalAuthority() {
+            STATE.adminsCanApprove = !STATE.adminsCanApprove;
+            saveStateToStorage();
+            logSystemActivity('تعديل صلاحيات المشرفين', STATE.activeUser.name, `${STATE.adminsCanApprove ? 'منح' : 'سحب'} صلاحيات تفعيل حسابات المنتظرين من المشرفين.`);
+            renderSettingsView(document.getElementById('view-container'));
+            showToast('تم تحديث مصفوفة الصلاحيات والمزايا', 'success');
+        }
+
+        function simulateBackup() {
+            logSystemActivity('نسخ احتياطي للبيانات', STATE.activeUser.name, `تم حفظ نسخة احتياطية مشفرة بنجاح بنظام 5_HUB_BACKUP_v1.5.bin.`);
+            showToast('تم حفظ وحفظ نسخة احتياطية في الخادم بنجاح 💾', 'success');
+        }
+
+        function confirmResetToDefaults() {
+            showCustomConfirm("هل أنت متأكد من تصفير المنصة بالكامل وإعادة البيانات لوضع المصنع الأول؟ ستمسح كافة الحسابات والمهام المضافة حديثاً.", () => {
+                localStorage.removeItem('5hub_state');
+                STATE = JSON.parse(JSON.stringify(DEFAULT_STATE));
+                saveStateToStorage();
+                window.location.reload();
+            });
+        }
+
+        function showToast(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            if (!container) return;
+
+            const toast = document.createElement('div');
+            
+            const typeStyles = {
+                success: 'bg-emerald-500 text-white shadow-emerald-500/10',
+                warning: 'bg-amber-500 text-white shadow-amber-500/10',
+                info: 'bg-blue-600 text-white shadow-blue-600/10',
+                error: 'bg-rose-600 text-white shadow-rose-600/10'
+            };
+
+            const icons = {
+                success: 'fa-circle-check',
+                warning: 'fa-triangle-exclamation',
+                info: 'fa-circle-info',
+                error: 'fa-circle-xmark'
+            };
+
+            toast.className = `p-4 rounded-xl shadow-lg border border-white/10 flex items-center gap-3 text-xs font-semibold pointer-events-auto transform transition-all duration-300 animate-bounce-short ${typeStyles[type] || typeStyles.info}`;
+            toast.innerHTML = `
+                <i class="fa-solid ${icons[type] || icons.info} text-base shrink-0"></i>
+                <div class="flex-1">${message}</div>
+                <button onclick="this.parentElement.remove()" class="text-white/60 hover:text-white p-1"><i class="fa-solid fa-times"></i></button>
+            `;
+
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.classList.add('opacity-0', 'translate-y-2');
+                setTimeout(() => toast.remove(), 300);
+            }, 4000);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.add('hidden');
+        }
+
+        function toggleTheme() {
+            const html = document.documentElement;
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                STATE.theme = 'light';
+                saveStateToStorage();
+                showToast('تم تفعيل الوضع المضيء ☀️', 'info');
+            } else {
+                html.classList.add('dark');
+                STATE.theme = 'dark';
+                saveStateToStorage();
+                showToast('تم تفعيل الوضع الداكن 🌙', 'info');
+            }
+        }
+
+        function toggleSidebarMobile() {
+            const sidebar = document.getElementById('app-sidebar');
+            const overlay = document.getElementById('sidebar-overlay');
+            if (sidebar) {
+                if (sidebar.classList.contains('translate-x-full')) {
+                    sidebar.classList.remove('translate-x-full');
+                    if (overlay) overlay.classList.remove('hidden');
+                } else {
+                    sidebar.classList.add('translate-x-full');
+                    if (overlay) overlay.classList.add('hidden');
+                }
+            }
+        }
+
+        // دالة تحاكي حالة اتصال الأعضاء ونشاطاتهم الحية في الخلفية تلقائياً
+        function startLiveStatusSimulation() {
+            setInterval(() => {
+                STATE.users.forEach(u => {
+                    // إذا كان العضو هو المستخدم الحالي المسجل دخوله، نضمن دائماً اتصاله ونشاطه الفعلي
+                    if (STATE.activeUser && u.id === STATE.activeUser.id) {
+                        u.online = true;
+                        u.currentActivity = `يتصفح قسم: ${STATE.activeTab === 'users-status' ? 'المتواجدون والمراقبة 👁️' : STATE.activeTab}`;
+                        return;
+                    }
+
+                    // تبديل حالة اتصال المستخدمين الآخرين بشكل عشوائي وذكي لمحاكاة واقعية
+                    if (Math.random() > 0.85) {
+                        u.online = !u.online;
+                    }
+
+                    if (u.online) {
+                        const randomActivities = [
+                            "يتصفح لوحة التحكم الرئيسية 📊",
+                            "يكتب رسالة في الشات العام 💬",
+                            "يراجع قائمة المهام (Trello) 📋",
+                            "يقوم بتحميل ملف من المستودع 💾",
+                            "يعدل بيانات ملفه الشخصي ⚙️",
+                            "يشاهد إحصائيات المشروع 📈",
+                            "خامل حالياً (Idle) 💤"
+                        ];
+                        u.currentActivity = randomActivities[Math.floor(Math.random() * randomActivities.length)];
+                        
+                        // إذا كان هذا العضو تحت المراقبة النشطة حالياً من المالك، نضيف لوج في كونسول التجسس
+                        if (STATE.monitoredUserId === u.id) {
+                            if (!STATE.spyLogs[u.id]) STATE.spyLogs[u.id] = [];
+                            
+                            const logsList = [
+                                "قام بالنقر على زر التنقل داخل القائمة.",
+                                "يقوم بالتمرير لأسفل الصفحة ببطء لمعاينة البيانات.",
+                                "يتحرك مؤشر الفأرة بشكل نشط داخل الشاشة.",
+                                "يقوم بقراءة أحدث الرسائل والإعلانات.",
+                                "بانتظار حدوث تفاعل جديد من المستخدم."
+                            ];
+                            const randomAction = logsList[Math.floor(Math.random() * logsList.length)];
+                            STATE.spyLogs[u.id].push(`[${new Date().toLocaleTimeString('ar-EG')}] ${randomAction}`);
+                            
+                            // الحفاظ على كونسول نظيف ومختصر بحد أقصى 10 أسطر
+                            if (STATE.spyLogs[u.id].length > 10) {
+                                STATE.spyLogs[u.id].shift();
+                            }
+                        }
+                    } else {
+                        u.currentActivity = "غير متصل (Offline) 💤";
+                    }
+                });
+
+                // مزامنة وعرض التحديثات مباشرة دون إعادة تحميل إذا كان المالك متواجد بالتبويب
+                if (STATE.activeTab === 'users-status') {
+                    renderUsersStatusView(document.getElementById('view-container'));
+                }
+            }, 4000);
+        }
+
+        // تشغيل وتهيئة المنصة والتطبيق عند التحميل
+        window.onload = function() {
+            // التحقق من الوضع المحفوظ
+            if (STATE.theme === 'light') {
+                document.documentElement.classList.remove('dark');
+            } else {
+                document.documentElement.classList.add('dark');
+            }
+
+            // فحص حالة الجلسة: إذا كان هناك حساب نشط، أدخل فوراً، وإلا أظهر شاشة الدخول
+            if (STATE.activeUser) {
+                document.getElementById('login-container').classList.add('hidden');
+                document.getElementById('main-app-container').classList.remove('hidden');
+                document.getElementById('simulator-bar').classList.remove('hidden');
+                
+                checkMaintenanceStatus();
+                updateSidebar();
+                renderActiveTab();
+            } else {
+                document.getElementById('main-app-container').classList.add('hidden');
+                document.getElementById('simulator-bar').classList.add('hidden');
+                document.getElementById('login-container').classList.remove('hidden');
+            }
+
+            // بدء محاكاة حركة المستخدمين وحالة الاتصال تلقائياً
+            startLiveStatusSimulation();
+        }
+    </script>
+</body>
+</html>
